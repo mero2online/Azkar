@@ -34,7 +34,7 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1em;
 }
 
 .read-the-docs {
@@ -54,4 +54,16 @@
 }
 .Finished {
   background-color: brown;
+}
+.Started {
+  background-color: #005eff;
+}
+.MyBtn {
+  color: white;
+}
+.MyCountBtn {
+  color: white;
+  width: 100px;
+  height: 100px;
+  margin: 0px 10px 0px 10px;
 }

@@ -15,7 +15,7 @@ function App() {
       <div>
         {Azkar.map((z) => {
           return (
-            <button key={z.id} onClick={() => setCurrent(z)}>
+            <button className='MyBtn' key={z.id} onClick={() => setCurrent(z)}>
               {z.name}
             </button>
           );

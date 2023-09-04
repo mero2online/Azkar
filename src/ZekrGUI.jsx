@@ -19,15 +19,18 @@ const ZekrGUI = ({ current }) => {
       <h1>{current.name}</h1>
       <div>
         {zekrById(current.id).map((z, i) => {
-          const activeStyle = count[i] === z.counter_num ? 'Finished' : '';
+          const activeStyle =
+            count[i] == 0
+              ? ''
+              : count[i] === z.counter_num
+              ? 'Finished'
+              : 'Started';
           return (
             <div key={i} className='card'>
               <h2 className='arabicfont zekr-style'>{z.description}</h2>
-              <div className='arabicfont zekr-style'>
-                {z.counter_num} {z.counter}
-              </div>
+              <button className='MyBtn'>{z.counter_num}</button>
               <button
-                className={activeStyle}
+                className={`MyCountBtn ${activeStyle}`}
                 onClick={() =>
                   setCount({
                     ...count,
@@ -35,9 +38,10 @@ const ZekrGUI = ({ current }) => {
                   })
                 }
               >
-                count {count[i]}
+                {count[i]}
               </button>
               <button
+                className='MyBtn'
                 onClick={() =>
                   setCount({
                     ...count,
