@@ -69,3 +69,60 @@
   margin: 0px 10px 0px 10px;
   padding: 0px 0px 100px;
 }
+
+/* Button to scroll to the top of the page */
+.goToTopBtn {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  background-color: #0f2b3d00;
+  border-radius: 30%;
+  padding: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  z-index: 90;
+}
+
+/* Tip for go to top button styles */
+.goToTopBtn::before {
+  content: attr(data-tip);
+  visibility: hidden;
+  background-color: #0f2b3d00;
+  text-align: center;
+  width: 90px;
+  border-radius: 6px;
+  padding: 5px;
+  opacity: 0;
+  transition: opacity 1s;
+  position: absolute;
+  z-index: 1;
+  top: -48%;
+  right: 101%;
+}
+
+/*
+Apply hover for devices that can hover (desktops, laptops, non touch screen) 
+to avoid hover being sticky on tap
+*/
+@media (hover: hover) {
+  /* Go to top button :hover */
+  .goToTopBtn:hover {
+    background-color: #0f2b3d00;
+    border-radius: 30%;
+  }
+
+  /* Go to top button tip :hover */
+  .goToTopBtn:hover::before {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+/* Remove hover for devices that can hover but hover being sticky on tap (touchscreens) */
+@media (pointer: coarse) {
+  .goToTopBtn:hover::before {
+    display: none;
+  }
+}

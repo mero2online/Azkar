@@ -1,17 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { zekrById } from './Data';
 import PropTypes from 'prop-types';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 const ZekrGUI = ({ current }) => {
   const [count, setCount] = useState();
-
+  const btnRef = useRef(0);
   useEffect(() => {
     let myCount = {};
     zekrById(current.id).forEach((element, idx) => {
       myCount[idx] = 0;
     });
     setCount(myCount);
+    if (btnRef.current !== null) {
+      window.addEventListener('scroll', handleScroll);
+    }
   }, [current]);
+
+  const handleScroll = () => {
+    const btn = btnRef.current;
+    if (btn) {
+      document.body.scrollTop > 400 || document.documentElement.scrollTop > 400
+        ? (btn.style.display = 'block')
+        : (btn.style.display = 'none');
+    }
+  };
+  const onGotoTopBtn = () => {
+    document.body.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+    document.documentElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
 
   if (!count) return <div> Loading </div>;
   return (
@@ -38,7 +63,10 @@ const ZekrGUI = ({ current }) => {
                   })
                 }
               >
-                {count[i]}
+                <div>{count[i]}</div>
+                <div>
+                  <FingerprintIcon />
+                </div>
               </button>
               <button
                 className='MyBtn'
@@ -49,12 +77,21 @@ const ZekrGUI = ({ current }) => {
                   })
                 }
               >
-                reset
+                <RestartAltIcon />
               </button>
+              <hr></hr>
             </div>
           );
         })}
       </div>
+      <button
+        ref={btnRef}
+        onClick={onGotoTopBtn}
+        className='goToTopBtn'
+        data-tip='Go to top'
+      >
+        <ArrowCircleUpIcon/>
+      </button>
     </>
   );
 };
