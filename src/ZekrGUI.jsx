@@ -53,7 +53,21 @@ const ZekrGUI = ({ current }) => {
           return (
             <div key={i} className='card'>
               <h2 className='arabicfont zekr-style'>{z.description}</h2>
-              <button className='MyBtn'>{z.counter_num}</button>
+              <div>
+                <button className='MyBtn'>{z.counter_num}</button>
+                <button className='MyBtn'>{count[i]}</button>
+                <button
+                  className='MyBtn'
+                  onClick={() =>
+                    setCount({
+                      ...count,
+                      [i]: 0,
+                    })
+                  }
+                >
+                  <RestartAltIcon />
+                </button>
+              </div>
               <button
                 className={`MyCountBtn ${activeStyle}`}
                 onClick={() =>
@@ -63,21 +77,9 @@ const ZekrGUI = ({ current }) => {
                   })
                 }
               >
-                <div>{count[i]}</div>
-                <div>
-                  <FingerprintIcon />
+                <div className='fingerPrintDiv'>
+                  <FingerprintIcon className='fingerPrintSVG' />
                 </div>
-              </button>
-              <button
-                className='MyBtn'
-                onClick={() =>
-                  setCount({
-                    ...count,
-                    [i]: 0,
-                  })
-                }
-              >
-                <RestartAltIcon />
               </button>
               <hr></hr>
             </div>
@@ -90,7 +92,7 @@ const ZekrGUI = ({ current }) => {
         className='goToTopBtn'
         data-tip='Go to top'
       >
-        <ArrowCircleUpIcon/>
+        <ArrowCircleUpIcon />
       </button>
     </>
   );

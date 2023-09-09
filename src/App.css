@@ -61,6 +61,8 @@
 .MyBtn {
   user-select: none;
   color: white;
+  margin: 5px;
+  font-size: 1.4em;
 }
 .MyCountBtn {
   user-select: none;
@@ -127,4 +129,20 @@ to avoid hover being sticky on tap
   .goToTopBtn:hover::before {
     display: none;
   }
+}
+.fingerPrintDiv {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+.fingerPrintSVG {
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+hr{
+  user-select: none;
 }
