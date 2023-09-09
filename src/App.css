@@ -59,9 +59,11 @@
   background-color: #005eff;
 }
 .MyBtn {
+  user-select: none;
   color: white;
 }
 .MyCountBtn {
+  user-select: none;
   font-size: xx-large;
   color: white;
   width: 100px;
@@ -76,7 +78,7 @@
   position: fixed;
   bottom: 10px;
   right: 10px;
-  background-color: #0f2b3d00;
+  background-color: #3d3d3d;
   border-radius: 30%;
   padding: 15px;
   font-weight: bold;
