@@ -1,29 +1,15 @@
-import { useState } from 'react';
 import './App.css';
-import ZekrGUI from './ZekrGUI';
-
-const Azkar = [
-  { id: 97, name: 'دعاء السفر' },
-  { id: 28, name: 'أذكار المساء' },
-  { id: 27, name: 'أذكار الصباح' },
-  { id: 25, name: 'الأذكار بعد الصلاة' },
-];
+import { Routes, Route } from 'react-router-dom';
+import PreZekrGUI from './PreZekrGUI';
+import Home from './Home';
 
 function App() {
-  const [current, setCurrent] = useState(null);
   return (
     <>
-      <h1>Zekr App</h1>
-      <div>
-        {Azkar.map((z) => {
-          return (
-            <button className='MyBtn' key={z.id} onClick={() => setCurrent(z)}>
-              {z.name}
-            </button>
-          );
-        })}
-      </div>
-      {current && <ZekrGUI current={current}></ZekrGUI>}
+      <Routes>
+        <Route path='/' element={<Home />}></Route>
+        <Route path='/:ZekrId' element={<PreZekrGUI />}></Route>
+      </Routes>
     </>
   );
 }
