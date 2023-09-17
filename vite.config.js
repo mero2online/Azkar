@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default ({ mode }) => {
   // eslint-disable-next-line no-undef
   process.env = Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
-  const BASE_URL = mode === 'development' ? '' : '/zekr';
+  const BASE_URL = mode === 'development' ? '/zekr' : '/zekr';
 
   return defineConfig({
     base: BASE_URL,
