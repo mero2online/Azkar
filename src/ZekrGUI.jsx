@@ -42,6 +42,7 @@ const ZekrGUI = ({ current }) => {
   return (
     <>
       <h1>{current.name}</h1>
+      <hr />
       <div>
         {zekrById(current.id).map((z, i) => {
           const activeStyle =
@@ -52,6 +53,9 @@ const ZekrGUI = ({ current }) => {
               : 'Started';
           return (
             <div key={i} className='card'>
+              <div>
+                {i + 1} of {zekrById(current.id).length} - {current.name}
+              </div>
               <h2 className='arabicfont zekr-style'>{z.description}</h2>
               <div>
                 <button className='MyBtn'>{z.counter_num}</button>
