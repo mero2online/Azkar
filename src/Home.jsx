@@ -5,7 +5,6 @@ import { Azkar } from './Constants';
 function Home() {
   return (
     <>
-      <h1>Zekr App</h1>
       <div>
         {Azkar.map((z, i) => {
           return (
