@@ -54,12 +54,6 @@ const ZekrGUI = ({ current }) => {
           return (
             <div key={i} className='card'>
               <div>
-                {i + 1} of {zekrById(current.id).length} - {current.name}
-              </div>
-              <h2 className='arabicfont zekr-style'>{z.description}</h2>
-              <div>
-                <button className='MyBtn'>{z.counter_num}</button>
-                <button className='MyBtn'>{count[i]}</button>
                 <button
                   className='MyBtn'
                   onClick={() =>
@@ -71,6 +65,14 @@ const ZekrGUI = ({ current }) => {
                 >
                   <RestartAltIcon />
                 </button>
+                <div>
+                  {i + 1} of {zekrById(current.id).length} - {current.name}
+                </div>
+              </div>
+              <h2 className='arabicfont zekr-style'>{z.description}</h2>
+              <div>
+                <button className='MyBtn'>{z.counter_num}</button>
+                <button className='MyBtn'>{count[i]}</button>
               </div>
               <button
                 className={`MyCountBtn ${activeStyle}`}
