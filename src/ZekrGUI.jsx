@@ -7,7 +7,16 @@ import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 
 const ZekrGUI = ({ current }) => {
   const [count, setCount] = useState();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const btnRef = useRef(0);
+  const elementRefs = useRef([]);
+
+  const handleNext = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex + 1) % zekrById(current.id).length
+    );
+  };
+
   useEffect(() => {
     let myCount = {};
     zekrById(current.id).forEach((element, idx) => {
@@ -18,6 +27,15 @@ const ZekrGUI = ({ current }) => {
       window.addEventListener('scroll', handleScroll);
     }
   }, [current]);
+
+  useEffect(() => {
+    if (elementRefs.current[currentIndex]) {
+      elementRefs.current[currentIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [currentIndex]);
 
   const handleScroll = () => {
     const btn = btnRef.current;
@@ -42,7 +60,6 @@ const ZekrGUI = ({ current }) => {
   return (
     <>
       <h1>{current.name}</h1>
-      <hr />
       <div>
         {zekrById(current.id).map((z, i) => {
           const activeStyle =
@@ -52,8 +69,13 @@ const ZekrGUI = ({ current }) => {
               ? 'Finished'
               : 'Started';
           return (
-            <div key={i} className='card'>
+            <div
+              key={i}
+              ref={(el) => (elementRefs.current[i] = el)}
+              className='card'
+            >
               <div>
+                <hr></hr>
                 <button
                   className='MyBtn'
                   onClick={() =>
@@ -76,18 +98,21 @@ const ZekrGUI = ({ current }) => {
               </div>
               <button
                 className={`MyCountBtn ${activeStyle}`}
-                onClick={() =>
+                onClick={() => {
                   setCount({
                     ...count,
                     [i]: count[i] < z.counter_num ? count[i] + 1 : count[i],
-                  })
-                }
+                  });
+                  setCurrentIndex(i);
+                  if (count[i] === z.counter_num - 1) {
+                    handleNext();
+                  }
+                }}
               >
                 <div className='fingerPrintDiv'>
                   <FingerprintIcon className='fingerPrintSVG' />
                 </div>
               </button>
-              <hr></hr>
             </div>
           );
         })}
