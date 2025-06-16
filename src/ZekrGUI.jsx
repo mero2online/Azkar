@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import { format } from 'date-fns';
 
-const ZekrGUI = ({ current }) => {
+const ZekrGUI = ({ current, storedCounts, storedDateTimes }) => {
   const [count, setCount] = useState();
+  const [dateTime, setDateTime] = useState();
   const [currentIndex, setCurrentIndex] = useState(0);
   const btnRef = useRef(0);
   const elementRefs = useRef([]);
@@ -19,14 +21,21 @@ const ZekrGUI = ({ current }) => {
 
   useEffect(() => {
     let myCount = {};
+    let myDateTime = {};
+
     zekrById(current.id).forEach((element, idx) => {
-      myCount[idx] = 0;
+      // Restore from localStorage if available, or default to 0 / ''
+      myCount[idx] = storedCounts?.[current.id]?.[idx] ?? 0;
+      myDateTime[idx] = storedDateTimes?.[current.id]?.[idx] ?? '';
     });
+
     setCount(myCount);
+    setDateTime(myDateTime);
+
     if (btnRef.current !== null) {
       window.addEventListener('scroll', handleScroll);
     }
-  }, [current]);
+  }, [current, storedCounts, storedDateTimes]);
 
   useEffect(() => {
     if (elementRefs.current[currentIndex]) {
@@ -36,6 +45,39 @@ const ZekrGUI = ({ current }) => {
       });
     }
   }, [currentIndex]);
+  useEffect(() => {
+    if (storedDateTimes) {
+      let timestamps = storedDateTimes?.[current.id];
+      if (timestamps && typeof timestamps === 'object') {
+        const entries = Object.entries(timestamps)
+          .filter(([, value]) => value) // keep only non-empty timestamps
+          .map(([key, value]) => ({ key, date: new Date(value) }));
+
+        if (entries.length === 0) {
+          console.log('No valid timestamps found.');
+        } else {
+          const mostRecent = entries.reduce((latest, current) =>
+            current.date > latest.date ? current : latest
+          );
+          setCurrentIndex(Number(mostRecent.key));
+          console.log('Most recent object number:', mostRecent.key);
+          console.log('Timestamp:', mostRecent.date.toISOString());
+        }
+      }
+    }
+  }, [storedDateTimes, current]);
+
+  useEffect(() => {
+    const allCounts = JSON.parse(localStorage.getItem('count') || '{}');
+    allCounts[current.id] = count;
+    localStorage.setItem('count', JSON.stringify(allCounts));
+  }, [count, current.id]);
+
+  useEffect(() => {
+    const allDateTimes = JSON.parse(localStorage.getItem('dateTime') || '{}');
+    allDateTimes[current.id] = dateTime;
+    localStorage.setItem('dateTime', JSON.stringify(allDateTimes));
+  }, [dateTime, current.id]);
 
   const handleScroll = () => {
     const btn = btnRef.current;
@@ -61,6 +103,26 @@ const ZekrGUI = ({ current }) => {
     <>
       <h1>{current.name}</h1>
       <div>
+        <button
+          className='MyBtn'
+          onClick={() => {
+            let myCount = {};
+            let myDateTime = {};
+
+            zekrById(current.id).forEach((element, idx) => {
+              myCount[idx] = 0;
+              myDateTime[idx] = '';
+            });
+
+            setCount(myCount);
+            setDateTime(myDateTime);
+          }}
+        >
+          <RestartAltIcon />
+          Reset All
+        </button>
+      </div>
+      <div>
         {zekrById(current.id).map((z, i) => {
           const activeStyle =
             count[i] == 0
@@ -78,12 +140,16 @@ const ZekrGUI = ({ current }) => {
                 <hr></hr>
                 <button
                   className='MyBtn'
-                  onClick={() =>
+                  onClick={() => {
                     setCount({
                       ...count,
                       [i]: 0,
-                    })
-                  }
+                    });
+                    setDateTime({
+                      ...dateTime,
+                      [i]: '',
+                    });
+                  }}
                 >
                   <RestartAltIcon />
                 </button>
@@ -107,12 +173,21 @@ const ZekrGUI = ({ current }) => {
                   if (count[i] === z.counter_num - 1) {
                     handleNext();
                   }
+                  setDateTime({
+                    ...dateTime,
+                    [i]: count[i] < z.counter_num ? new Date() : dateTime[i],
+                  });
                 }}
               >
                 <div className='fingerPrintDiv'>
                   <FingerprintIcon className='fingerPrintSVG' />
                 </div>
               </button>
+              <div>
+                {dateTime[i]
+                  ? format(dateTime[i], 'dd-MM-yyyy hh:mm:ss.SS a')
+                  : ''}
+              </div>
             </div>
           );
         })}
@@ -130,5 +205,7 @@ const ZekrGUI = ({ current }) => {
 };
 ZekrGUI.propTypes = {
   current: PropTypes.object.isRequired,
+  storedCounts: PropTypes.object.isRequired,
+  storedDateTimes: PropTypes.object.isRequired,
 };
 export default ZekrGUI;
