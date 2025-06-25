@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import { format } from 'date-fns';
 
 const ZekrGUI = ({ current, storedCounts, storedDateTimes }) => {
@@ -37,35 +38,18 @@ const ZekrGUI = ({ current, storedCounts, storedDateTimes }) => {
     }
   }, [current, storedCounts, storedDateTimes]);
 
+  const scrollToElementByIndex = (idx) => {
+    elementRefs.current[idx].scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
+
   useEffect(() => {
     if (elementRefs.current[currentIndex]) {
-      elementRefs.current[currentIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
+      scrollToElementByIndex(currentIndex);
     }
   }, [currentIndex]);
-  useEffect(() => {
-    if (storedDateTimes) {
-      let timestamps = storedDateTimes?.[current.id];
-      if (timestamps && typeof timestamps === 'object') {
-        const entries = Object.entries(timestamps)
-          .filter(([, value]) => value) // keep only non-empty timestamps
-          .map(([key, value]) => ({ key, date: new Date(value) }));
-
-        if (entries.length === 0) {
-          console.log('No valid timestamps found.');
-        } else {
-          const mostRecent = entries.reduce((latest, current) =>
-            current.date > latest.date ? current : latest
-          );
-          setCurrentIndex(Number(mostRecent.key));
-          console.log('Most recent object number:', mostRecent.key);
-          console.log('Timestamp:', mostRecent.date.toISOString());
-        }
-      }
-    }
-  }, [storedDateTimes, current]);
 
   useEffect(() => {
     const allCounts = JSON.parse(localStorage.getItem('count') || '{}');
@@ -120,6 +104,34 @@ const ZekrGUI = ({ current, storedCounts, storedDateTimes }) => {
         >
           <RestartAltIcon />
           Reset All
+        </button>
+        <button
+          className='MyBtn'
+          onClick={() => {
+            if (storedDateTimes) {
+              let timestamps = storedDateTimes?.[current.id];
+              if (timestamps && typeof timestamps === 'object') {
+                const entries = Object.entries(timestamps)
+                  .filter(([, value]) => value) // keep only non-empty timestamps
+                  .map(([key, value]) => ({ key, date: new Date(value) }));
+
+                if (entries.length === 0) {
+                  console.log('No valid timestamps found.');
+                } else {
+                  const mostRecent = entries.reduce((latest, current) =>
+                    current.date > latest.date ? current : latest
+                  );
+                  setCurrentIndex(Number(mostRecent.key));
+                  scrollToElementByIndex(Number(mostRecent.key))
+                  console.log('Most recent object number:', mostRecent.key);
+                  console.log('Timestamp:', mostRecent.date.toISOString());
+                }
+              }
+            }
+          }}
+        >
+          <ArrowCircleDownIcon />
+          Go To Last
         </button>
       </div>
       <div>
