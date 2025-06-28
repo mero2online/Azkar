@@ -8,27 +8,20 @@ function PreZekrGUI() {
   let { ZekrId } = useParams();
   const [current, setCurrent] = useState(null);
   const [storedCounts, setCurrentStoredCounts] = useState(null);
-  const [storedDateTimes, setCurrentStoredDateTimes] = useState(null);
 
   useEffect(() => {
     // Try to get saved data from localStorage
-    const storedCounts = JSON.parse(localStorage.getItem('count') || '{}');
-    const storedDateTimes = JSON.parse(
-      localStorage.getItem('dateTime') || '{}'
+    const storedCounts = JSON.parse(
+      localStorage.getItem('mergedCount') || '{}'
     );
     setCurrent(Azkar[Number(ZekrId)]);
     setCurrentStoredCounts(storedCounts);
-    setCurrentStoredDateTimes(storedDateTimes);
   }, [ZekrId]);
 
   return (
     <>
       {current && (
-        <ZekrGUI
-          current={current}
-          storedCounts={storedCounts}
-          storedDateTimes={storedDateTimes}
-        ></ZekrGUI>
+        <ZekrGUI current={current} storedCounts={storedCounts}></ZekrGUI>
       )}
     </>
   );
