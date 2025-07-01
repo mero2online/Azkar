@@ -92,6 +92,9 @@ const ZekrGUI = ({ current, storedCounts }) => {
       ).length;
       const allLength = zekrById(current.id).length;
       const statusTxt = activeCount === allLength ? 'Completed' : 'InProgress';
+      const statusBackgroundColor =
+        activeCount === allLength ? '#006100' : 'yellow';
+      const statusColor = activeCount === allLength ? 'white' : 'black';
       const firstFalseIndex = Object.entries(myCurrentStatus).find(
         ([, value]) => value.status === false
       )?.[0];
@@ -103,7 +106,14 @@ const ZekrGUI = ({ current, storedCounts }) => {
       return (
         <div>
           {/* <pre>{JSON.stringify(myCurrentStatus, null, 2)}</pre>; */}
-          <div>
+          <div
+            style={{
+              backgroundColor: statusBackgroundColor,
+              color: statusColor,
+              display: 'inline-block',
+              width: '13rem',
+            }}
+          >
             {statusTxt}: {activeCount}/{allLength}
           </div>
           <div>
