@@ -12,8 +12,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
+import { useTheme as useMuiTheme } from '@mui/material/styles';
+import { Box, Typography } from '@mui/material';
 
 const ZekrGUI = ({ current, storedCounts }) => {
+  const theme = useMuiTheme();
   const [mergedCount, setMergedCount] = useState();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [openResetDialog, setOpenResetDialog] = useState(false);
@@ -115,8 +118,13 @@ const ZekrGUI = ({ current, storedCounts }) => {
       const allLength = zekrById(current.id).length;
       const statusTxt = activeCount === allLength ? 'Completed' : 'InProgress';
       const statusBackgroundColor =
-        activeCount === allLength ? '#006100' : 'yellow';
-      const statusColor = activeCount === allLength ? 'white' : 'black';
+        activeCount === allLength
+          ? theme.palette.success.main
+          : theme.palette.warning.main;
+      const statusColor =
+        activeCount === allLength
+          ? theme.palette.success.contrastText
+          : theme.palette.warning.contrastText;
       const firstFalseIndex = Object.entries(myCurrentStatus).find(
         ([, value]) => value.status === false
       )?.[0];
@@ -124,40 +132,47 @@ const ZekrGUI = ({ current, storedCounts }) => {
       let time = getData['time'];
       let index = getData['index'];
       const disabledBtn = time === 'No valid timestamps found.' ? true : false;
-      const colorBtn = time === 'No valid timestamps found.' ? 'red' : 'blue';
       return (
-        <div>
+        <Box>
           {/* <pre>{JSON.stringify(myCurrentStatus, null, 2)}</pre>; */}
-          <div
-            style={{
+          <Box
+            sx={{
               backgroundColor: statusBackgroundColor,
               color: statusColor,
               display: 'inline-block',
               width: '13rem',
+              padding: '0.5rem',
+              borderRadius: '4px',
+              fontWeight: 'bold',
             }}
           >
             {statusTxt}: {activeCount}/{allLength}
-          </div>
+          </Box>
           <div>
             {
-              <button
+              <Button
                 disabled={disabledBtn}
-                style={{ backgroundColor: colorBtn }}
-                className='MyBtn'
+                variant="contained"
+                color={disabledBtn ? 'error' : 'primary'}
+                startIcon={<ArrowCircleDownIcon />}
                 onClick={() => {
                   setCurrentIndex(index);
                   scrollToElementByIndex(index);
                 }}
+                sx={{ m: 0.5, fontSize: '1.2em' }}
               >
-                <ArrowCircleDownIcon />
                 Go To Last Time
-              </button>
+              </Button>
             }
           </div>
-          <div>Last Time: {time}</div>
+          <Typography variant="body1" sx={{ my: 1 }}>
+            Last Time: {time}
+          </Typography>
           <div>
-            <button
-              className='MyBtn'
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<ArrowCircleDownIcon />}
               onClick={() => {
                 if (firstFalseIndex) {
                   setCurrentIndex(firstFalseIndex);
@@ -167,13 +182,15 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   scrollToElementByIndex(0);
                 }
               }}
+              sx={{ m: 0.5, fontSize: '1.2em' }}
             >
-              <ArrowCircleDownIcon />
               Go To First Count
-            </button>
-            <div>Last Count: {index + 1}</div>
+            </Button>
+            <Typography variant="body1" sx={{ my: 1 }}>
+              Last Count: {index + 1}
+            </Typography>
           </div>
-        </div>
+        </Box>
       );
     }
   };
@@ -183,34 +200,49 @@ const ZekrGUI = ({ current, storedCounts }) => {
     <>
       {/* <pre>{JSON.stringify(mergedCount, null, 2)}</pre> */}
       <h1>{current.name}</h1>
-      <div>
-        <button
-          className='MyBtn'
+      <Box sx={{ my: 2 }}>
+        <Button
+          variant="contained"
+          color="error"
+          startIcon={<RestartAltIcon />}
           onClick={() => setOpenResetDialog(true)}
+          sx={{ fontSize: '1.2em' }}
         >
-          <RestartAltIcon />
           Reset All
-        </button>
-      </div>
+        </Button>
+      </Box>
       <div>{checkStatus()}</div>
       <div>
         {zekrById(current.id).map((z, i) => {
-          const activeStyle =
-            mergedCount[i].count == 0
-              ? ''
-              : mergedCount[i].count === mergedCount[i].counterNum
-              ? 'Finished'
-              : 'Started';
+          const getActiveColor = () => {
+            if (mergedCount[i].count === 0) {
+              return theme.palette.primary.main;
+            } else if (mergedCount[i].count === mergedCount[i].counterNum) {
+              return theme.palette.error.main;
+            } else {
+              return theme.palette.info.main;
+            }
+          };
+
           return (
-            <div
+            <Box
               key={i}
               ref={(el) => (elementRefs.current[i] = el)}
               className='card'
+              sx={{
+                backgroundColor: theme.palette.background.paper,
+                borderRadius: '8px',
+                boxShadow: theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)',
+                mb: 2,
+                transition: 'all 0.3s ease',
+              }}
             >
-              <div>
-                <hr></hr>
-                <button
-                  className='MyBtn'
+              <Box>
+                <hr style={{ borderColor: theme.palette.divider }}></hr>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  size="small"
                   onClick={() => {
                     setMergedCount((prev) => ({
                       ...prev,
@@ -221,20 +253,39 @@ const ZekrGUI = ({ current, storedCounts }) => {
                       },
                     }));
                   }}
+                  sx={{ m: 0.5 }}
                 >
                   <RestartAltIcon />
-                </button>
-                <div>
+                </Button>
+                <Typography variant="body2" sx={{ my: 1 }}>
                   {i + 1} of {zekrById(current.id).length} - {current.name}
-                </div>
-              </div>
-              <h2 className='arabicfont zekr-style'>{z.description}</h2>
-              <div>
-                <button className='MyBtn'>{mergedCount[i].counterNum}</button>
-                <button className='MyBtn'>{mergedCount[i].count}</button>
-              </div>
+                </Typography>
+              </Box>
+              <Typography variant="h5" className='arabicfont zekr-style'>
+                {z.description}
+              </Typography>
+              <Box sx={{ my: 1 }}>
+                <Button
+                  variant="contained"
+                  color="info"
+                  sx={{ m: 0.5, minWidth: '60px' }}
+                >
+                  {mergedCount[i].counterNum}
+                </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  sx={{ m: 0.5, minWidth: '60px' }}
+                >
+                  {mergedCount[i].count}
+                </Button>
+              </Box>
               <button
-                className={`MyCountBtn ${activeStyle}`}
+                className='MyCountBtn'
+                style={{
+                  backgroundColor: getActiveColor(),
+                  transition: 'background-color 0.3s ease',
+                }}
                 onClick={() => {
                   setCurrentIndex(i);
                   if (mergedCount[i].count === mergedCount[i].counterNum - 1) {
@@ -265,12 +316,12 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   <FingerprintIcon className='fingerPrintSVG' />
                 </div>
               </button>
-              <div>
+              <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
                 {mergedCount[i].dateTime
                   ? format(mergedCount[i].dateTime, 'dd-MM-yyyy hh:mm:ss.SS a')
                   : ''}
-              </div>
-              <div>
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
                 {mergedCount[i].dateTime
                   ? (() => {
                       const duration = intervalToDuration({
@@ -285,8 +336,8 @@ const ZekrGUI = ({ current, storedCounts }) => {
                       return parts.length > 0 ? `Since: ${parts.join(' ')}` : 'Just now';
                     })()
                   : ''}
-              </div>
-            </div>
+              </Typography>
+            </Box>
           );
         })}
       </div>

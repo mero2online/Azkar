@@ -3,10 +3,6 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -14,13 +10,52 @@
   -webkit-text-size-adjust: 100%;
 }
 
+:root[data-theme='light'] {
+  --text-color: #213547;
+  --bg-color: #ffffff;
+  --link-color: #646cff;
+  --link-hover-color: #535bf2;
+  --button-bg: #646cff;
+  --button-hover-border: #535bf2;
+  --card-bg: #f9f9f9;
+  --success-bg: #006100;
+  --started-bg: #005eff;
+  --finished-bg: brown;
+  --go-to-top-bg: #646cff;
+  --primary-btn: #646cff;
+  --error-btn: #d32f2f;
+  --disabled-btn: #9e9e9e;
+}
+
+:root[data-theme='dark'] {
+  --text-color: rgba(255, 255, 255, 0.87);
+  --bg-color: #242424;
+  --link-color: #7c8aa1;
+  --link-hover-color: #8a98b3;
+  --button-bg: #4a5568;
+  --button-hover-border: #5a6678;
+  --card-bg: #1a1a1a;
+  --success-bg: #38a169;
+  --started-bg: #3182ce;
+  --finished-bg: #e53e3e;
+  --go-to-top-bg: #4a5568;
+  --primary-btn: #4a5568;
+  --error-btn: #e53e3e;
+  --disabled-btn: #616161;
+}
+
+:root {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
 a {
   font-weight: 500;
-  color: #646cff;
+  color: var(--link-color);
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: var(--link-hover-color);
 }
 
 body {
@@ -43,27 +78,15 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--button-bg);
   cursor: pointer;
   transition: border-color 0.25s;
+  color: var(--text-color);
 }
 button:hover {
-  border-color: #646cff;
+  border-color: var(--button-hover-border);
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #ffffffff;
-    background-color: #242424;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #1a1a1a;
-  }
 }

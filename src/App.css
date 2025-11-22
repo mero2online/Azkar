@@ -35,6 +35,8 @@
 
 .card {
   padding: 1em;
+  background-color: var(--card-bg);
+  transition: background-color 0.3s ease;
 }
 
 .read-the-docs {
@@ -53,16 +55,18 @@
   line-height: 140%;
 }
 .Finished {
-  background-color: brown;
+  background-color: var(--finished-bg);
 }
 .Started {
-  background-color: #005eff;
+  background-color: var(--started-bg);
 }
 .MyBtn {
   user-select: none;
   color: white;
   margin: 5px;
   font-size: 1.4em;
+  background-color: var(--button-bg);
+  transition: all 0.3s ease;
 }
 .MyCountBtn {
   user-select: none;
@@ -80,13 +84,14 @@
   position: fixed;
   bottom: 10px;
   right: 10px;
-  background-color: #3d3d3d;
+  background-color: var(--go-to-top-bg);
   border-radius: 30%;
   padding: 15px;
   font-weight: bold;
   cursor: pointer;
   outline: none;
   z-index: 90;
+  transition: background-color 0.3s ease;
 }
 
 /* Tip for go to top button styles */
