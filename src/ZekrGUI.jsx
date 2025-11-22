@@ -5,7 +5,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-import { format } from 'date-fns';
+import { format, intervalToDuration } from 'date-fns';
 
 const ZekrGUI = ({ current, storedCounts }) => {
   const [mergedCount, setMergedCount] = useState();
@@ -258,6 +258,22 @@ const ZekrGUI = ({ current, storedCounts }) => {
               <div>
                 {mergedCount[i].dateTime
                   ? format(mergedCount[i].dateTime, 'dd-MM-yyyy hh:mm:ss.SS a')
+                  : ''}
+              </div>
+              <div>
+                {mergedCount[i].dateTime
+                  ? (() => {
+                      const duration = intervalToDuration({
+                        start: new Date(mergedCount[i].dateTime),
+                        end: new Date(),
+                      });
+                      const parts = [];
+                      if (duration.months) parts.push(`${duration.months} month${duration.months > 1 ? 's' : ''}`);
+                      if (duration.days) parts.push(`${duration.days} day${duration.days > 1 ? 's' : ''}`);
+                      if (duration.hours) parts.push(`${duration.hours} hour${duration.hours > 1 ? 's' : ''}`);
+                      if (duration.minutes) parts.push(`${duration.minutes} minute${duration.minutes > 1 ? 's' : ''}`);
+                      return parts.length > 0 ? `Since: ${parts.join(' ')}` : 'Just now';
+                    })()
                   : ''}
               </div>
             </div>
