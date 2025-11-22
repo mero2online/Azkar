@@ -6,10 +6,17 @@ import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import { format, intervalToDuration } from 'date-fns';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
 
 const ZekrGUI = ({ current, storedCounts }) => {
   const [mergedCount, setMergedCount] = useState();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [openResetDialog, setOpenResetDialog] = useState(false);
   const btnRef = useRef(0);
   const elementRefs = useRef([]);
 
@@ -17,6 +24,21 @@ const ZekrGUI = ({ current, storedCounts }) => {
     setCurrentIndex(
       (prevIndex) => (prevIndex + 1) % zekrById(current.id).length
     );
+  };
+
+  const handleResetAll = () => {
+    let myMergedCount = {};
+
+    zekrById(current.id).forEach((element, idx) => {
+      myMergedCount[idx] = {
+        count: 0,
+        counterNum: element.counter_num,
+        dateTime: '',
+      };
+    });
+
+    setMergedCount(myMergedCount);
+    setOpenResetDialog(false);
   };
 
   useEffect(() => {
@@ -164,19 +186,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
       <div>
         <button
           className='MyBtn'
-          onClick={() => {
-            let myMergedCount = {};
-
-            zekrById(current.id).forEach((element, idx) => {
-              myMergedCount[idx] = {
-                count: myMergedCount?.[current.id]?.[idx].count ?? 0,
-                counterNum: element.counter_num,
-                dateTime: myMergedCount?.[current.id]?.[idx].dateTime ?? '',
-              };
-            });
-
-            setMergedCount(myMergedCount);
-          }}
+          onClick={() => setOpenResetDialog(true)}
         >
           <RestartAltIcon />
           Reset All
@@ -288,6 +298,28 @@ const ZekrGUI = ({ current, storedCounts }) => {
       >
         <ArrowCircleUpIcon />
       </button>
+
+      <Dialog
+        open={openResetDialog}
+        onClose={() => setOpenResetDialog(false)}
+        aria-labelledby='reset-dialog-title'
+        aria-describedby='reset-dialog-description'
+      >
+        <DialogTitle id='reset-dialog-title'>Confirm Reset All</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='reset-dialog-description'>
+            Are you sure you want to reset all counts? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenResetDialog(false)} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={handleResetAll} color='error' autoFocus>
+            Reset All
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
