@@ -23,6 +23,29 @@ const ZekrGUI = ({ current, storedCounts }) => {
   const btnRef = useRef(0);
   const elementRefs = useRef([]);
 
+  // Utility function to calculate time since a given date
+  const getTimeSince = (dateTime, format = 'long') => {
+    if (!dateTime) {
+      return '';
+    }
+    const duration = intervalToDuration({
+      start: new Date(dateTime),
+      end: new Date(),
+    });
+    const parts = [];
+    if (duration.months) parts.push(`${duration.months} month${duration.months > 1 ? 's' : ''}`);
+    if (duration.days) parts.push(`${duration.days} day${duration.days > 1 ? 's' : ''}`);
+    if (duration.hours) parts.push(`${duration.hours} hour${duration.hours > 1 ? 's' : ''}`);
+    if (duration.minutes) parts.push(`${duration.minutes} minute${duration.minutes > 1 ? 's' : ''}`);
+
+    if (parts.length === 0) {
+      return format === 'long' ? ' (Just now)' : 'Just now';
+    }
+
+    const timeString = parts.join(' ');
+    return format === 'long' ? ` (${timeString} ago)` : `Since: ${timeString}`;
+  };
+
   const handleNext = () => {
     setCurrentIndex(
       (prevIndex) => (prevIndex + 1) % zekrById(current.id).length
@@ -132,6 +155,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
       let time = getData['time'];
       let index = getData['index'];
       const disabledBtn = time === 'No valid timestamps found.' ? true : false;
+
       return (
         <Box>
           {/* <pre>{JSON.stringify(myCurrentStatus, null, 2)}</pre>; */}
@@ -165,9 +189,16 @@ const ZekrGUI = ({ current, storedCounts }) => {
               </Button>
             }
           </div>
-          <Typography variant="body1" sx={{ my: 1 }}>
-            Last Time: {time}
-          </Typography>
+          <Box>
+            <Typography variant="body1" sx={{ my: 1 }}>
+              Last Time: {time}
+            </Typography>
+            {!disabledBtn && mergedCount[index]?.dateTime && (
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+                {getTimeSince(mergedCount[index].dateTime, 'long')}
+              </Typography>
+            )}
+          </Box>
           <div>
             <Button
               variant="contained"
@@ -322,20 +353,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   : ''}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                {mergedCount[i].dateTime
-                  ? (() => {
-                      const duration = intervalToDuration({
-                        start: new Date(mergedCount[i].dateTime),
-                        end: new Date(),
-                      });
-                      const parts = [];
-                      if (duration.months) parts.push(`${duration.months} month${duration.months > 1 ? 's' : ''}`);
-                      if (duration.days) parts.push(`${duration.days} day${duration.days > 1 ? 's' : ''}`);
-                      if (duration.hours) parts.push(`${duration.hours} hour${duration.hours > 1 ? 's' : ''}`);
-                      if (duration.minutes) parts.push(`${duration.minutes} minute${duration.minutes > 1 ? 's' : ''}`);
-                      return parts.length > 0 ? `Since: ${parts.join(' ')}` : 'Just now';
-                    })()
-                  : ''}
+                {getTimeSince(mergedCount[i].dateTime, 'short')}
               </Typography>
             </Box>
           );
