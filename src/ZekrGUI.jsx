@@ -270,6 +270,14 @@ const ZekrGUI = ({ current, storedCounts }) => {
             >
               <Box>
                 <hr style={{ borderColor: theme.palette.divider }}></hr>
+                <Typography variant="body2" sx={{ my: 1 }}>
+                  {i + 1} of {zekrById(current.id).length} - {current.name}
+                </Typography>
+              </Box>
+              <Typography variant="h5" className='arabicfont zekr-style'>
+                {z.description}
+              </Typography>
+              <Box sx={{ my: 1 }}>
                 <Button
                   variant="contained"
                   color="warning"
@@ -288,14 +296,6 @@ const ZekrGUI = ({ current, storedCounts }) => {
                 >
                   <RestartAltIcon />
                 </Button>
-                <Typography variant="body2" sx={{ my: 1 }}>
-                  {i + 1} of {zekrById(current.id).length} - {current.name}
-                </Typography>
-              </Box>
-              <Typography variant="h5" className='arabicfont zekr-style'>
-                {z.description}
-              </Typography>
-              <Box sx={{ my: 1 }}>
                 <Button
                   variant="contained"
                   color="info"
