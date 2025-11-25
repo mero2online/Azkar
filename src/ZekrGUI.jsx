@@ -33,10 +33,16 @@ const ZekrGUI = ({ current, storedCounts }) => {
       end: new Date(),
     });
     const parts = [];
-    if (duration.months) parts.push(`${duration.months} month${duration.months > 1 ? 's' : ''}`);
-    if (duration.days) parts.push(`${duration.days} day${duration.days > 1 ? 's' : ''}`);
-    if (duration.hours) parts.push(`${duration.hours} hour${duration.hours > 1 ? 's' : ''}`);
-    if (duration.minutes) parts.push(`${duration.minutes} minute${duration.minutes > 1 ? 's' : ''}`);
+    if (duration.months)
+      parts.push(`${duration.months} month${duration.months > 1 ? 's' : ''}`);
+    if (duration.days)
+      parts.push(`${duration.days} day${duration.days > 1 ? 's' : ''}`);
+    if (duration.hours)
+      parts.push(`${duration.hours} hour${duration.hours > 1 ? 's' : ''}`);
+    if (duration.minutes)
+      parts.push(
+        `${duration.minutes} minute${duration.minutes > 1 ? 's' : ''}`
+      );
 
     if (parts.length === 0) {
       return format === 'long' ? ' (Just now)' : 'Just now';
@@ -176,7 +182,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
             {
               <Button
                 disabled={disabledBtn}
-                variant="contained"
+                variant='contained'
                 color={disabledBtn ? 'error' : 'primary'}
                 startIcon={<ArrowCircleDownIcon />}
                 onClick={() => {
@@ -190,19 +196,22 @@ const ZekrGUI = ({ current, storedCounts }) => {
             }
           </div>
           <Box>
-            <Typography variant="body1" sx={{ my: 1 }}>
+            <Typography variant='body1' sx={{ my: 1 }}>
               Last Time: {time}
             </Typography>
             {!disabledBtn && mergedCount[index]?.dateTime && (
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+              <Typography
+                variant='body2'
+                sx={{ color: 'text.secondary', fontStyle: 'italic' }}
+              >
                 {getTimeSince(mergedCount[index].dateTime, 'long')}
               </Typography>
             )}
           </Box>
           <div>
             <Button
-              variant="contained"
-              color="primary"
+              variant='contained'
+              color='primary'
               startIcon={<ArrowCircleDownIcon />}
               onClick={() => {
                 if (firstFalseIndex) {
@@ -217,7 +226,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
             >
               Go To First Count
             </Button>
-            <Typography variant="body1" sx={{ my: 1 }}>
+            <Typography variant='body1' sx={{ my: 1 }}>
               Last Count: {index + 1}
             </Typography>
           </div>
@@ -233,8 +242,8 @@ const ZekrGUI = ({ current, storedCounts }) => {
       <h1>{current.name}</h1>
       <Box sx={{ my: 2 }}>
         <Button
-          variant="contained"
-          color="error"
+          variant='contained'
+          color='error'
           startIcon={<RestartAltIcon />}
           onClick={() => setOpenResetDialog(true)}
           sx={{ fontSize: '1.2em' }}
@@ -263,25 +272,28 @@ const ZekrGUI = ({ current, storedCounts }) => {
               sx={{
                 backgroundColor: theme.palette.background.paper,
                 borderRadius: '8px',
-                boxShadow: theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 8px rgba(0,0,0,0.1)',
+                boxShadow:
+                  theme.palette.mode === 'dark'
+                    ? '0 2px 8px rgba(0,0,0,0.3)'
+                    : '0 2px 8px rgba(0,0,0,0.1)',
                 mb: 2,
                 transition: 'all 0.3s ease',
               }}
             >
               <Box>
                 <hr style={{ borderColor: theme.palette.divider }}></hr>
-                <Typography variant="body2" sx={{ my: 1 }}>
+                <Typography variant='body2' sx={{ my: 1 }}>
                   {i + 1} of {zekrById(current.id).length} - {current.name}
                 </Typography>
               </Box>
-              <Typography variant="h5" className='arabicfont zekr-style'>
+              <Typography variant='h5' className='arabicfont zekr-style'>
                 {z.description}
               </Typography>
               <Box sx={{ my: 1 }}>
                 <Button
-                  variant="contained"
-                  color="warning"
-                  size="small"
+                  variant='contained'
+                  color='warning'
+                  size='small'
                   onClick={() => {
                     setMergedCount((prev) => ({
                       ...prev,
@@ -297,15 +309,15 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   <RestartAltIcon />
                 </Button>
                 <Button
-                  variant="contained"
-                  color="info"
+                  variant='contained'
+                  color='info'
                   sx={{ m: 0.5, minWidth: '60px' }}
                 >
                   {mergedCount[i].counterNum}
                 </Button>
                 <Button
-                  variant="contained"
-                  color="success"
+                  variant='contained'
+                  color='success'
                   sx={{ m: 0.5, minWidth: '60px' }}
                 >
                   {mergedCount[i].count}
@@ -347,14 +359,23 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   <FingerprintIcon className='fingerPrintSVG' />
                 </div>
               </button>
-              <Typography variant="body2" sx={{ mt: 1, color: 'text.secondary' }}>
+              <Typography
+                variant='body2'
+                sx={{ mt: 1, color: 'text.secondary' }}
+              >
                 {mergedCount[i].dateTime
                   ? format(mergedCount[i].dateTime, 'dd-MM-yyyy hh:mm:ss.SS a')
-                  : ''}
+                  : '_-_'}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                {getTimeSince(mergedCount[i].dateTime, 'short')}
+              <Typography
+                variant='body2'
+                sx={{ color: 'text.secondary', fontStyle: 'italic' }}
+              >
+                {mergedCount[i].dateTime
+                  ? getTimeSince(mergedCount[i].dateTime, 'short')
+                  : '-_-'}
               </Typography>
+              <hr style={{ borderColor: theme.palette.divider }}></hr>
             </Box>
           );
         })}
@@ -377,7 +398,8 @@ const ZekrGUI = ({ current, storedCounts }) => {
         <DialogTitle id='reset-dialog-title'>Confirm Reset All</DialogTitle>
         <DialogContent>
           <DialogContentText id='reset-dialog-description'>
-            Are you sure you want to reset all counts? This action cannot be undone.
+            Are you sure you want to reset all counts? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
