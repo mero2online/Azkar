@@ -199,14 +199,15 @@ const ZekrGUI = ({ current, storedCounts }) => {
             <Typography variant='body1' sx={{ my: 1 }}>
               Last Time: {time}
             </Typography>
-            {!disabledBtn && mergedCount[index]?.dateTime && (
-              <Typography
-                variant='body2'
-                sx={{ color: 'text.secondary', fontStyle: 'italic' }}
-              >
-                {getTimeSince(mergedCount[index].dateTime, 'long')}
-              </Typography>
-            )}
+
+            <Typography
+              variant='body2'
+              sx={{ color: 'text.secondary', fontStyle: 'italic' }}
+            >
+              {!disabledBtn && mergedCount[index]?.dateTime
+                ? getTimeSince(mergedCount[index].dateTime, 'long')
+                : '-_-'}
+            </Typography>
           </Box>
           <div>
             <Button
@@ -403,10 +404,19 @@ const ZekrGUI = ({ current, storedCounts }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenResetDialog(false)} color='primary'>
+          <Button
+            onClick={() => setOpenResetDialog(false)}
+            variant='contained'
+            color='primary'
+          >
             Cancel
           </Button>
-          <Button onClick={handleResetAll} color='error' autoFocus>
+          <Button
+            onClick={handleResetAll}
+            variant='contained'
+            color='error'
+            autoFocus
+          >
             Reset All
           </Button>
         </DialogActions>
