@@ -5,6 +5,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import SortIcon from '@mui/icons-material/Sort';
 import { format, intervalToDuration } from 'date-fns';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,6 +21,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
   const [mergedCount, setMergedCount] = useState();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [openResetDialog, setOpenResetDialog] = useState(false);
+  const [sortOrder, setSortOrder] = useState('default'); // 'default', 'asc', 'desc'
   const btnRef = useRef(0);
   const elementRefs = useRef([]);
 
@@ -241,7 +243,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
     <>
       {/* <pre>{JSON.stringify(mergedCount, null, 2)}</pre> */}
       <h1>{current.name}</h1>
-      <Box sx={{ my: 2 }}>
+      <Box sx={{ my: 2, display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
         <Button
           variant='contained'
           color='error'
@@ -251,24 +253,50 @@ const ZekrGUI = ({ current, storedCounts }) => {
         >
           Reset All
         </Button>
+        <Button
+          variant='contained'
+          color={sortOrder !== 'default' ? 'secondary' : 'primary'}
+          startIcon={<SortIcon />}
+          onClick={() => {
+            setSortOrder(prev => {
+              if (prev === 'default') return 'asc';
+              if (prev === 'asc') return 'desc';
+              return 'default';
+            });
+          }}
+          sx={{ fontSize: '1.2em' }}
+        >
+          {sortOrder === 'default' ? 'Sort: Default' : sortOrder === 'asc' ? 'Sort: Asc ↑' : 'Sort: Desc ↓'}
+        </Button>
       </Box>
       <div>{checkStatus()}</div>
       <div>
-        {zekrById(current.id).map((z, i) => {
-          const getActiveColor = () => {
-            if (mergedCount[i].count === 0) {
-              return theme.palette.primary.main;
-            } else if (mergedCount[i].count === mergedCount[i].counterNum) {
-              return theme.palette.error.main;
-            } else {
-              return theme.palette.info.main;
-            }
-          };
+        {(() => {
+          const zekrItems = zekrById(current.id);
+          const indices = zekrItems.map((_, i) => i);
 
-          return (
-            <Box
-              key={i}
-              ref={(el) => (elementRefs.current[i] = el)}
+          if (sortOrder === 'asc') {
+            indices.sort((a, b) => mergedCount[a].counterNum - mergedCount[b].counterNum);
+          } else if (sortOrder === 'desc') {
+            indices.sort((a, b) => mergedCount[b].counterNum - mergedCount[a].counterNum);
+          }
+
+          return indices.map((i) => {
+            const z = zekrItems[i];
+            const getActiveColor = () => {
+              if (mergedCount[i].count === 0) {
+                return theme.palette.primary.main;
+              } else if (mergedCount[i].count === mergedCount[i].counterNum) {
+                return theme.palette.error.main;
+              } else {
+                return theme.palette.info.main;
+              }
+            };
+
+            return (
+              <Box
+                key={`zekr-${z.id}`}
+                ref={(el) => (elementRefs.current[i] = el)}
               className='card'
               sx={{
                 backgroundColor: theme.palette.background.paper,
@@ -377,9 +405,10 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   : '-_-'}
               </Typography>
               <hr style={{ borderColor: theme.palette.divider }}></hr>
-            </Box>
-          );
-        })}
+              </Box>
+            );
+          });
+        })()}
       </div>
       <button
         ref={btnRef}
@@ -395,6 +424,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
         onClose={() => setOpenResetDialog(false)}
         aria-labelledby='reset-dialog-title'
         aria-describedby='reset-dialog-description'
+        disableRestoreFocus
       >
         <DialogTitle id='reset-dialog-title'>Confirm Reset All</DialogTitle>
         <DialogContent>
@@ -408,6 +438,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
             onClick={() => setOpenResetDialog(false)}
             variant='contained'
             color='primary'
+            autoFocus
           >
             Cancel
           </Button>
@@ -415,7 +446,6 @@ const ZekrGUI = ({ current, storedCounts }) => {
             onClick={handleResetAll}
             variant='contained'
             color='error'
-            autoFocus
           >
             Reset All
           </Button>
