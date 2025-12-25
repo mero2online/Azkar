@@ -54,10 +54,37 @@ const ZekrGUI = ({ current, storedCounts }) => {
     return format === 'long' ? ` (${timeString} ago)` : `Since: ${timeString}`;
   };
 
-  const handleNext = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex + 1) % zekrById(current.id).length
-    );
+  // Get sorted indices based on current sort order
+  const getSortedIndices = () => {
+    const zekrItems = zekrById(current.id);
+    const indices = zekrItems.map((_, i) => i);
+
+    if (sortOrder === 'asc' && mergedCount) {
+      indices.sort((a, b) => mergedCount[a].counterNum - mergedCount[b].counterNum);
+    } else if (sortOrder === 'desc' && mergedCount) {
+      indices.sort((a, b) => mergedCount[b].counterNum - mergedCount[a].counterNum);
+    }
+
+    return indices;
+  };
+
+  const handleNext = (currentIdx) => {
+    const sortedIndices = getSortedIndices();
+    const currentPosInSorted = sortedIndices.indexOf(currentIdx);
+    const nextPosInSorted = (currentPosInSorted + 1) % sortedIndices.length;
+
+    // Find first incomplete item starting from next position
+    for (let offset = 0; offset < sortedIndices.length; offset++) {
+      const checkPos = (nextPosInSorted + offset) % sortedIndices.length;
+      const checkIdx = sortedIndices[checkPos];
+      if (mergedCount[checkIdx].count < mergedCount[checkIdx].counterNum) {
+        setCurrentIndex(checkIdx);
+        return;
+      }
+    }
+
+    // All complete, go to first item in sorted order
+    setCurrentIndex(sortedIndices[0]);
   };
 
   const handleResetAll = () => {
@@ -273,13 +300,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
       <div>
         {(() => {
           const zekrItems = zekrById(current.id);
-          const indices = zekrItems.map((_, i) => i);
-
-          if (sortOrder === 'asc') {
-            indices.sort((a, b) => mergedCount[a].counterNum - mergedCount[b].counterNum);
-          } else if (sortOrder === 'desc') {
-            indices.sort((a, b) => mergedCount[b].counterNum - mergedCount[a].counterNum);
-          }
+          const indices = getSortedIndices();
 
           return indices.map((i) => {
             const z = zekrItems[i];
@@ -359,15 +380,29 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   transition: 'background-color 0.3s ease',
                 }}
                 onClick={() => {
-                  setCurrentIndex(i);
-                  if (mergedCount[i].count === mergedCount[i].counterNum - 1) {
-                    handleNext();
+                  const currentCount = mergedCount[i];
+                  const isAlreadyComplete = currentCount.count === currentCount.counterNum;
+
+                  // If already complete, go to next incomplete item
+                  if (isAlreadyComplete) {
+                    handleNext(i);
+                    return;
                   }
+
+                  // Re-center on current item
+                  scrollToElementByIndex(i);
+                  setCurrentIndex(i);
 
                   setMergedCount((prev) => {
                     const currentCount = prev[i];
                     const shouldIncrement =
                       currentCount.count < currentCount.counterNum;
+                    const willComplete = currentCount.count === currentCount.counterNum - 1;
+
+                    // Schedule handleNext after state update if this click completes the counter
+                    if (shouldIncrement && willComplete) {
+                      setTimeout(() => handleNext(i), 100);
+                    }
 
                     return {
                       ...prev,
