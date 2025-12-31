@@ -27,7 +27,7 @@ function App() {
           <h1 style={{
             fontSize: 'clamp(2.5rem, 6vw, 5rem)',
             whiteSpace: 'nowrap',
-            margin: '1rem 0',
+            margin: '1.5rem 0',
             textAlign: 'center',
           }}>
             {appData.displayName} v{appData.version}
@@ -39,7 +39,7 @@ function App() {
           aria-label="toggle theme"
           sx={{
             position: 'fixed',
-            top: 20,
+            top: 10,
             right: 20,
             zIndex: 1000,
             backgroundColor: 'background.paper',
