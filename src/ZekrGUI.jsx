@@ -208,6 +208,28 @@ const ZekrGUI = ({ current, storedCounts }) => {
             {statusTxt}: {activeCount}/{allLength}
           </Box>
           <div>
+            <Button
+              variant='contained'
+              color='primary'
+              startIcon={<ArrowCircleDownIcon />}
+              onClick={() => {
+                if (firstFalseIndex) {
+                  setCurrentIndex(firstFalseIndex);
+                  scrollToElementByIndex(firstFalseIndex);
+                } else {
+                  setCurrentIndex(0);
+                  scrollToElementByIndex(0);
+                }
+              }}
+              sx={{ m: 0.5, fontSize: '1.2em' }}
+            >
+              Go To First Count
+            </Button>
+            <Typography variant='body1' sx={{ my: 1 }}>
+              Last Count: {index + 1}
+            </Typography>
+          </div>
+          <div>
             {
               <Button
                 disabled={disabledBtn}
@@ -238,28 +260,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                 : '-_-'}
             </Typography>
           </Box>
-          <div>
-            <Button
-              variant='contained'
-              color='primary'
-              startIcon={<ArrowCircleDownIcon />}
-              onClick={() => {
-                if (firstFalseIndex) {
-                  setCurrentIndex(firstFalseIndex);
-                  scrollToElementByIndex(firstFalseIndex);
-                } else {
-                  setCurrentIndex(0);
-                  scrollToElementByIndex(0);
-                }
-              }}
-              sx={{ m: 0.5, fontSize: '1.2em' }}
-            >
-              Go To First Count
-            </Button>
-            <Typography variant='body1' sx={{ my: 1 }}>
-              Last Count: {index + 1}
-            </Typography>
-          </div>
+        
         </Box>
       );
     }
@@ -269,7 +270,12 @@ const ZekrGUI = ({ current, storedCounts }) => {
   return (
     <>
       {/* <pre>{JSON.stringify(mergedCount, null, 2)}</pre> */}
-      <h1>{current.name}</h1>
+      <h1 style={{
+        fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+        whiteSpace: 'nowrap',
+        margin: '1rem 0',
+        textAlign: 'center',
+      }}>{current.name}</h1>
       <Box sx={{ my: 2, display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
         <Button
           variant='contained'

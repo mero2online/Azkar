@@ -17,14 +17,19 @@ function App() {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           alignItems: 'center',
           maxWidth: '1280px',
           margin: '0 auto',
         }}
       >
         <Link to={'/'}>
-          <h1>
+          <h1 style={{
+            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+            whiteSpace: 'nowrap',
+            margin: '1rem 0',
+            textAlign: 'center',
+          }}>
             {appData.displayName} v{appData.version}
           </h1>
         </Link>
