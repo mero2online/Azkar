@@ -25,7 +25,7 @@ function App() {
       >
         <Link to={'/'}>
           <h1 style={{
-            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
             whiteSpace: 'nowrap',
             margin: '1rem 0',
             textAlign: 'center',
