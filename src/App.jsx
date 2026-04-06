@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import PreZekrGUI from './PreZekrGUI';
 import Home from './Home';
 import appData from '../package.json';
@@ -13,6 +13,8 @@ import { Box } from '@mui/material';
 
 function App() {
   const { mode, toggleTheme, viewMode, toggleViewMode } = useTheme();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   return (
     <>
@@ -48,7 +50,7 @@ function App() {
             '&:hover': {
               backgroundColor: 'action.hover',
             },
-            display: viewMode === VIEW_MODES.HORIZONTAL ? 'none' : 'inline-flex',
+            display: isHome ? 'inline-flex' : 'none',
           }}
         >
           {viewMode === VIEW_MODES.VERTICAL ? <ViewCarouselIcon /> : <ViewDayIcon />}
@@ -66,7 +68,7 @@ function App() {
             '&:hover': {
               backgroundColor: 'action.hover',
             },
-            display: viewMode === VIEW_MODES.HORIZONTAL ? 'none' : 'inline-flex',
+            display: isHome ? 'inline-flex' : 'none',
           }}
         >
           {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}

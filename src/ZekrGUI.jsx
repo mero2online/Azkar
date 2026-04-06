@@ -268,112 +268,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
     touchDeltaRef.current = 0;
   }, [goToNextCard, goToPrevCard]);
 
-  const checkStatus = () => {
-    let myCurrentStatus = {};
-    if (mergedCount) {
-      zekrById(current.id).forEach((element, idx) => {
-        // Restore from localStorage if available, or default to 0 / ''
-
-        myCurrentStatus[idx] = {
-          status: mergedCount[idx].count === mergedCount[idx].counterNum,
-        };
-      });
-
-      const activeCount = Object.values(myCurrentStatus).filter(
-        (item) => item.status
-      ).length;
-      const allLength = zekrById(current.id).length;
-      const statusTxt = activeCount === allLength ? 'Completed' : 'InProgress';
-      const statusBackgroundColor =
-        activeCount === allLength
-          ? theme.palette.success.main
-          : theme.palette.warning.main;
-      const statusColor =
-        activeCount === allLength
-          ? theme.palette.success.contrastText
-          : theme.palette.warning.contrastText;
-      const firstFalseIndex = Object.entries(myCurrentStatus).find(
-        ([, value]) => value.status === false
-      )?.[0];
-      let getData = getMostRecentTime(mergedCount);
-      let time = getData['time'];
-      let index = getData['index'];
-      const disabledBtn = time === 'No valid timestamps found.' ? true : false;
-
-      return (
-        <Box>
-          {/* <pre>{JSON.stringify(myCurrentStatus, null, 2)}</pre>; */}
-          <Box
-            sx={{
-              backgroundColor: statusBackgroundColor,
-              color: statusColor,
-              display: 'inline-block',
-              width: '13rem',
-              padding: '0.5rem',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-            }}
-          >
-            {statusTxt}: {activeCount}/{allLength}
-          </Box>
-          <div>
-            <Button
-              variant='contained'
-              color='primary'
-              startIcon={<ArrowCircleDownIcon />}
-              onClick={() => {
-                if (firstFalseIndex) {
-                  setCurrentIndex(firstFalseIndex);
-                  scrollToElementByIndex(firstFalseIndex);
-                } else {
-                  setCurrentIndex(0);
-                  scrollToElementByIndex(0);
-                }
-              }}
-              sx={{ m: 0.5, fontSize: '1.2em' }}
-            >
-              Go To First Count
-            </Button>
-            <Typography variant='body1' sx={{ my: 1 }}>
-              Last Count: {index + 1}
-            </Typography>
-          </div>
-          <div>
-            {
-              <Button
-                disabled={disabledBtn}
-                variant='contained'
-                color={disabledBtn ? 'error' : 'primary'}
-                startIcon={<ArrowCircleDownIcon />}
-                onClick={() => {
-                  setCurrentIndex(index);
-                  scrollToElementByIndex(index);
-                }}
-                sx={{ m: 0.5, fontSize: '1.2em' }}
-              >
-                Go To Last Time
-              </Button>
-            }
-          </div>
-          <Box>
-            <Typography variant='body1' sx={{ my: 1 }}>
-              Last Time: {time}
-            </Typography>
-
-            <Typography
-              variant='body2'
-              sx={{ color: 'text.secondary', fontStyle: 'italic' }}
-            >
-              {!disabledBtn && mergedCount[index]?.dateTime
-                ? getTimeSince(mergedCount[index].dateTime, 'long')
-                : '-_-'}
-            </Typography>
-          </Box>
-        
-        </Box>
-      );
-    }
-  };
+  // checkStatus removed — all controls moved to drawer
 
   // Compute status data for use in both modes
   const getStatusData = () => {
@@ -520,7 +415,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   <Typography
                     variant='h6'
                     className='arabicfont zekr-style'
-                    sx={{ fontSize: 'clamp(1.1rem, 4vw, 1.6rem)' }}
+                    sx={{ fontSize: 'clamp(1.4rem, 5vw, 2rem)' }}
                   >
                     {z.description}
                   </Typography>
@@ -535,8 +430,8 @@ const ZekrGUI = ({ current, storedCounts }) => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    py: 0.5,
-                    gap: 0.5,
+                    py: 1.5,
+                    gap: 1,
                   }}
                 >
                   {/* Counter buttons */}
@@ -544,21 +439,20 @@ const ZekrGUI = ({ current, storedCounts }) => {
                     <Button
                       variant='contained'
                       color='warning'
-                      size='small'
                       onClick={() => {
                         setMergedCount((prev) => ({
                           ...prev,
                           [i]: { ...prev[i], count: 0, dateTime: '' },
                         }));
                       }}
-                      sx={{ m: 0.3, minWidth: 'auto' }}
+                      sx={{ m: 0.5, minWidth: 'auto' }}
                     >
-                      <RestartAltIcon fontSize='small' />
+                      <RestartAltIcon />
                     </Button>
-                    <Button variant='contained' color='info' size='small' sx={{ m: 0.3, minWidth: '50px' }}>
+                    <Button variant='contained' color='info' sx={{ m: 0.5, minWidth: '60px', fontSize: '1.1rem' }}>
                       {mergedCount[i].counterNum}
                     </Button>
-                    <Button variant='contained' color='success' size='small' sx={{ m: 0.3, minWidth: '50px' }}>
+                    <Button variant='contained' color='success' sx={{ m: 0.5, minWidth: '60px', fontSize: '1.1rem' }}>
                       {mergedCount[i].count}
                     </Button>
                   </Box>
@@ -569,9 +463,9 @@ const ZekrGUI = ({ current, storedCounts }) => {
                     style={{
                       backgroundColor: getActiveColor(),
                       transition: 'background-color 0.3s ease',
-                      width: '70px',
-                      height: '70px',
-                      padding: '0px 0px 70px',
+                      width: '90px',
+                      height: '90px',
+                      padding: '0px 0px 90px',
                     }}
                     onClick={() => {
                       const currentCount = mergedCount[i];
@@ -598,32 +492,32 @@ const ZekrGUI = ({ current, storedCounts }) => {
                       });
                     }}
                   >
-                    <div className='fingerPrintDiv' style={{ width: '70px', height: '70px' }}>
+                    <div className='fingerPrintDiv' style={{ width: '90px', height: '90px' }}>
                       <FingerprintIcon className='fingerPrintSVG' />
                     </div>
                   </button>
 
                   {/* Timestamp */}
-                  <Typography variant='caption' sx={{ color: 'text.secondary', lineHeight: 1.2 }}>
+                  <Typography variant='body2' sx={{ color: 'text.secondary' }}>
                     {mergedCount[i].dateTime
                       ? format(mergedCount[i].dateTime, 'dd-MM-yyyy hh:mm:ss.SS a')
                       : '_-_'}
                   </Typography>
-                  <Typography variant='caption' sx={{ color: 'text.secondary', fontStyle: 'italic', lineHeight: 1.2 }}>
+                  <Typography variant='body2' sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
                     {mergedCount[i].dateTime
                       ? getTimeSince(mergedCount[i].dateTime, 'short')
                       : '-_-'}
                   </Typography>
 
                   {/* Navigation buttons */}
-                  <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 2, mt: 0.5 }}>
                     <Button
                       variant='contained'
                       color='primary'
                       disabled={horizontalIndex === 0}
                       onClick={goToPrevCard}
                       startIcon={<NavigateNextIcon />}
-                      size='small'
+                      sx={{ fontSize: '1.1rem', px: 2.5 }}
                     >
                       السابق
                     </Button>
@@ -633,7 +527,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                       disabled={horizontalIndex === sortedIndices.length - 1}
                       onClick={goToNextCard}
                       endIcon={<NavigateBeforeIcon />}
-                      size='small'
+                      sx={{ fontSize: '1.1rem', px: 2.5 }}
                     >
                       التالي
                     </Button>
@@ -650,7 +544,49 @@ const ZekrGUI = ({ current, storedCounts }) => {
             onClose={() => setDrawerOpen(false)}
           >
             <Box sx={{ width: 280, p: 2, direction: 'rtl' }}>
-              <Typography variant='h6' sx={{ mb: 2, fontWeight: 'bold' }}>
+              {/* Home, Theme & View Mode — top of drawer */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
+                <Button
+                  variant='contained'
+                  color='info'
+                  fullWidth
+                  startIcon={<HomeIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate('/');
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Home
+                </Button>
+                <Button
+                  variant='contained'
+                  color='warning'
+                  fullWidth
+                  startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+                  onClick={toggleTheme}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                </Button>
+                <Button
+                  variant='contained'
+                  color='success'
+                  fullWidth
+                  startIcon={<ViewDayIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    toggleViewMode();
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Vertical Mode
+                </Button>
+              </Box>
+
+              <hr style={{ borderColor: theme.palette.divider, margin: '8px 0' }} />
+
+              <Typography variant='h6' sx={{ mb: 1, fontWeight: 'bold' }}>
                 {current.name}
               </Typography>
 
@@ -750,78 +686,198 @@ const ZekrGUI = ({ current, storedCounts }) => {
                 >
                   Reset All
                 </Button>
+              </Box>
+            </Box>
+          </Drawer>
+        </Box>
+      ) : (
+        /* ========== VERTICAL MODE ========== */
+        <>
+          {/* Top bar with menu */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 1,
+              py: 0.5,
+              mb: 1,
+            }}
+          >
+            <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
+              <MenuIcon />
+            </IconButton>
+            <h1 style={{
+              fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
+              whiteSpace: 'nowrap',
+              margin: '0.5rem 0',
+              textAlign: 'center',
+              flex: 1,
+            }}>{current.name}</h1>
+            {statusData && (
+              <Box
+                sx={{
+                  backgroundColor: statusData.statusBg,
+                  color: statusData.statusColor,
+                  px: 1,
+                  py: 0.3,
+                  borderRadius: '4px',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  flexShrink: 0,
+                }}
+              >
+                {statusData.activeCount}/{statusData.allLength}
+              </Box>
+            )}
+          </Box>
 
-                {/* Home, Theme & View Mode toggles */}
+          {/* Vertical mode drawer */}
+          <Drawer
+            anchor='right'
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+          >
+            <Box sx={{ width: 280, p: 2, direction: 'rtl' }}>
+              {/* Home, Theme & View Mode — top of drawer */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
                 <Button
-                  variant='outlined'
+                  variant='contained'
+                  color='info'
                   fullWidth
                   startIcon={<HomeIcon />}
                   onClick={() => {
                     setDrawerOpen(false);
                     navigate('/');
                   }}
+                  sx={{ fontSize: '1rem' }}
                 >
                   Home
                 </Button>
                 <Button
-                  variant='outlined'
+                  variant='contained'
+                  color='warning'
                   fullWidth
                   startIcon={mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
                   onClick={toggleTheme}
+                  sx={{ fontSize: '1rem' }}
                 >
                   {mode === 'dark' ? 'Light Mode' : 'Dark Mode'}
                 </Button>
                 <Button
-                  variant='outlined'
+                  variant='contained'
+                  color='success'
                   fullWidth
                   startIcon={<ViewDayIcon />}
                   onClick={() => {
                     setDrawerOpen(false);
                     toggleViewMode();
                   }}
+                  sx={{ fontSize: '1rem' }}
                 >
-                  Vertical Mode
+                  Horizontal Mode
+                </Button>
+              </Box>
+
+              <hr style={{ borderColor: theme.palette.divider, margin: '8px 0' }} />
+
+              {/* Status */}
+              {statusData && (
+                <Box sx={{ mb: 1 }}>
+                  <Box
+                    sx={{
+                      backgroundColor: statusData.statusBg,
+                      color: statusData.statusColor,
+                      width: '100%',
+                      padding: '0.5rem',
+                      borderRadius: '4px',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {statusData.statusTxt}: {statusData.activeCount}/{statusData.allLength}
+                  </Box>
+                </Box>
+              )}
+
+              {/* Navigation */}
+              {statusData && (
+                <Box sx={{ mb: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    fullWidth
+                    startIcon={<ArrowCircleDownIcon />}
+                    onClick={() => {
+                      if (statusData.firstFalseIndex) {
+                        setCurrentIndex(Number(statusData.firstFalseIndex));
+                        scrollToElementByIndex(Number(statusData.firstFalseIndex));
+                      } else {
+                        setCurrentIndex(0);
+                        scrollToElementByIndex(0);
+                      }
+                      setDrawerOpen(false);
+                    }}
+                  >
+                    Go To First Count
+                  </Button>
+                  <Button
+                    disabled={statusData.disabledBtn}
+                    variant='contained'
+                    color={statusData.disabledBtn ? 'error' : 'primary'}
+                    fullWidth
+                    startIcon={<ArrowCircleDownIcon />}
+                    onClick={() => {
+                      setCurrentIndex(statusData.index);
+                      scrollToElementByIndex(statusData.index);
+                      setDrawerOpen(false);
+                    }}
+                  >
+                    Go To Last Time
+                  </Button>
+                  <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                    Last Time: {statusData.time}
+                  </Typography>
+                  {!statusData.disabledBtn && mergedCount[statusData.index]?.dateTime && (
+                    <Typography variant='body2' sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
+                      {getTimeSince(mergedCount[statusData.index].dateTime, 'long')}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+
+              {/* Sort & Reset */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Button
+                  variant='contained'
+                  color={sortOrder !== 'default' ? 'secondary' : 'primary'}
+                  fullWidth
+                  startIcon={<SortIcon />}
+                  onClick={() => {
+                    setSortOrder((prev) => {
+                      if (prev === 'default') return 'asc';
+                      if (prev === 'asc') return 'desc';
+                      return 'default';
+                    });
+                  }}
+                >
+                  {sortOrder === 'default' ? 'Sort: Default' : sortOrder === 'asc' ? 'Sort: Asc ↑' : 'Sort: Desc ↓'}
+                </Button>
+                <Button
+                  variant='contained'
+                  color='error'
+                  fullWidth
+                  startIcon={<RestartAltIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    setOpenResetDialog(true);
+                  }}
+                >
+                  Reset All
                 </Button>
               </Box>
             </Box>
           </Drawer>
-        </Box>
-      ) : (
-        /* ========== VERTICAL MODE (original) ========== */
-        <>
-          <h1 style={{
-            fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
-            whiteSpace: 'nowrap',
-            margin: '1rem 0',
-            textAlign: 'center',
-          }}>{current.name}</h1>
-          <Box sx={{ my: 2, display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Button
-              variant='contained'
-              color='error'
-              startIcon={<RestartAltIcon />}
-              onClick={() => setOpenResetDialog(true)}
-              sx={{ fontSize: '1.2em' }}
-            >
-              Reset All
-            </Button>
-            <Button
-              variant='contained'
-              color={sortOrder !== 'default' ? 'secondary' : 'primary'}
-              startIcon={<SortIcon />}
-              onClick={() => {
-                setSortOrder(prev => {
-                  if (prev === 'default') return 'asc';
-                  if (prev === 'asc') return 'desc';
-                  return 'default';
-                });
-              }}
-              sx={{ fontSize: '1.2em' }}
-            >
-              {sortOrder === 'default' ? 'Sort: Default' : sortOrder === 'asc' ? 'Sort: Asc ↑' : 'Sort: Desc ↓'}
-            </Button>
-          </Box>
-          <div>{checkStatus()}</div>
           <div>
             {(() => {
               const zekrItems = zekrById(current.id);

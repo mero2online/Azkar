@@ -3,6 +3,9 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .logo {
