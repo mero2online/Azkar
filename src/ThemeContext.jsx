@@ -13,10 +13,17 @@ export const useTheme = () => {
   return context;
 };
 
+export const VIEW_MODES = { VERTICAL: 'vertical', HORIZONTAL: 'horizontal' };
+
 export const ThemeProvider = ({ children }) => {
   const [mode, setMode] = useState(() => {
     const savedMode = localStorage.getItem('themeMode');
     return savedMode || 'dark';
+  });
+
+  const [viewMode, setViewMode] = useState(() => {
+    const savedViewMode = localStorage.getItem('viewMode');
+    return savedViewMode || VIEW_MODES.VERTICAL;
   });
 
   useEffect(() => {
@@ -24,8 +31,18 @@ export const ThemeProvider = ({ children }) => {
     document.documentElement.setAttribute('data-theme', mode);
   }, [mode]);
 
+  useEffect(() => {
+    localStorage.setItem('viewMode', viewMode);
+  }, [viewMode]);
+
   const toggleTheme = () => {
     setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+  };
+
+  const toggleViewMode = () => {
+    setViewMode((prev) =>
+      prev === VIEW_MODES.VERTICAL ? VIEW_MODES.HORIZONTAL : VIEW_MODES.VERTICAL
+    );
   };
 
   const theme = useMemo(
@@ -102,6 +119,8 @@ export const ThemeProvider = ({ children }) => {
   const value = {
     mode,
     toggleTheme,
+    viewMode,
+    toggleViewMode,
   };
 
   return (

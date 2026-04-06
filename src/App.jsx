@@ -3,14 +3,16 @@ import { Routes, Route, Link } from 'react-router-dom';
 import PreZekrGUI from './PreZekrGUI';
 import Home from './Home';
 import appData from '../package.json';
-import { useTheme } from './ThemeContext';
+import { useTheme, VIEW_MODES } from './ThemeContext';
 import IconButton from '@mui/material/IconButton';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import ViewDayIcon from '@mui/icons-material/ViewDay';
+import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import { Box } from '@mui/material';
 
 function App() {
-  const { mode, toggleTheme } = useTheme();
+  const { mode, toggleTheme, viewMode, toggleViewMode } = useTheme();
 
   return (
     <>
@@ -34,6 +36,24 @@ function App() {
           </h1>
         </Link>
         <IconButton
+          onClick={toggleViewMode}
+          color="inherit"
+          aria-label="toggle view mode"
+          sx={{
+            position: 'fixed',
+            top: 10,
+            left: 20,
+            zIndex: 1000,
+            backgroundColor: 'background.paper',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            },
+            display: viewMode === VIEW_MODES.HORIZONTAL ? 'none' : 'inline-flex',
+          }}
+        >
+          {viewMode === VIEW_MODES.VERTICAL ? <ViewCarouselIcon /> : <ViewDayIcon />}
+        </IconButton>
+        <IconButton
           onClick={toggleTheme}
           color="inherit"
           aria-label="toggle theme"
@@ -46,6 +66,7 @@ function App() {
             '&:hover': {
               backgroundColor: 'action.hover',
             },
+            display: viewMode === VIEW_MODES.HORIZONTAL ? 'none' : 'inline-flex',
           }}
         >
           {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
