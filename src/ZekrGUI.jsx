@@ -27,6 +27,11 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ViewDayIcon from '@mui/icons-material/ViewDay';
 import HomeIcon from '@mui/icons-material/Home';
 
+// Vibration feedback on zekr completion
+const playCompletionFeedback = () => {
+  try { navigator.vibrate?.(500); } catch (e) { /* unsupported */ }
+};
+
 const ZekrGUI = ({ current, storedCounts }) => {
   const theme = useMuiTheme();
   const { viewMode, toggleViewMode, mode, toggleTheme } = useTheme();
@@ -474,13 +479,14 @@ const ZekrGUI = ({ current, storedCounts }) => {
                         goToNextCard();
                         return;
                       }
+                      const willComplete = currentCount.count + 1 === currentCount.counterNum;
+                      if (willComplete) {
+                        playCompletionFeedback();
+                        setTimeout(() => goToNextCard(), 600);
+                      }
                       setMergedCount((prev) => {
                         const currentCount = prev[i];
                         const shouldIncrement = currentCount.count < currentCount.counterNum;
-                        const willComplete = currentCount.count === currentCount.counterNum - 1;
-                        if (shouldIncrement && willComplete) {
-                          setTimeout(() => goToNextCard(), 100);
-                        }
                         return {
                           ...prev,
                           [i]: {
@@ -972,15 +978,16 @@ const ZekrGUI = ({ current, storedCounts }) => {
                         scrollToElementByIndex(i);
                         setCurrentIndex(i);
 
+                        const willComplete = currentCount.count + 1 === currentCount.counterNum;
+                        if (willComplete) {
+                          playCompletionFeedback();
+                          setTimeout(() => handleNext(i), 600);
+                        }
+
                         setMergedCount((prev) => {
                           const currentCount = prev[i];
                           const shouldIncrement =
                             currentCount.count < currentCount.counterNum;
-                          const willComplete = currentCount.count === currentCount.counterNum - 1;
-
-                          if (shouldIncrement && willComplete) {
-                            setTimeout(() => handleNext(i), 100);
-                          }
 
                           return {
                             ...prev,

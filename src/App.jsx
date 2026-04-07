@@ -1,4 +1,5 @@
 import './App.css';
+import { useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import PreZekrGUI from './PreZekrGUI';
 import Home from './Home';
@@ -15,6 +16,13 @@ function App() {
   const { mode, toggleTheme, viewMode, toggleViewMode } = useTheme();
   const location = useLocation();
   const isHome = location.pathname === '/';
+
+  // Request notification permission on first load (needed for vibration on Android 13+)
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, []);
 
   return (
     <>
