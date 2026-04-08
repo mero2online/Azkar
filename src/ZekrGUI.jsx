@@ -29,7 +29,7 @@ import HomeIcon from '@mui/icons-material/Home';
 
 // Vibration feedback on zekr completion
 const playCompletionFeedback = () => {
-  try { navigator.vibrate?.(500); } catch (e) { /* unsupported */ }
+  try { navigator.vibrate?.(200); } catch (e) { /* unsupported */ }
 };
 
 const ZekrGUI = ({ current, storedCounts }) => {
@@ -482,7 +482,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                       const willComplete = currentCount.count + 1 === currentCount.counterNum;
                       if (willComplete) {
                         playCompletionFeedback();
-                        setTimeout(() => goToNextCard(), 600);
+                        setTimeout(() => goToNextCard(), 300);
                       }
                       setMergedCount((prev) => {
                         const currentCount = prev[i];
@@ -981,7 +981,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
                         const willComplete = currentCount.count + 1 === currentCount.counterNum;
                         if (willComplete) {
                           playCompletionFeedback();
-                          setTimeout(() => handleNext(i), 600);
+                          setTimeout(() => handleNext(i), 300);
                         }
 
                         setMergedCount((prev) => {
