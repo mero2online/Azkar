@@ -700,42 +700,40 @@ const ZekrGUI = ({ current, storedCounts }) => {
         /* ========== VERTICAL MODE ========== */
         <>
           {/* Top bar with menu */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              px: 1,
-              py: 0.5,
-              mb: 1,
-            }}
-          >
-            <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
-              <MenuIcon />
-            </IconButton>
+          <Box sx={{ px: 1, py: 0.5, mb: 1 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 1,
+              }}
+            >
+              <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
+                <MenuIcon />
+              </IconButton>
+              {statusData && (
+                <Box
+                  sx={{
+                    backgroundColor: statusData.statusBg,
+                    color: statusData.statusColor,
+                    px: 1.5,
+                    py: 0.3,
+                    borderRadius: '4px',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {statusData.statusTxt}: {statusData.activeCount}/{statusData.allLength}
+                </Box>
+              )}
+            </Box>
             <h1 style={{
-              fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
-              whiteSpace: 'nowrap',
+              fontSize: 'clamp(1.2rem, 5vw, 2.5rem)',
               margin: '0.5rem 0',
               textAlign: 'center',
-              flex: 1,
+              wordBreak: 'break-word',
             }}>{current.name}</h1>
-            {statusData && (
-              <Box
-                sx={{
-                  backgroundColor: statusData.statusBg,
-                  color: statusData.statusColor,
-                  px: 1,
-                  py: 0.3,
-                  borderRadius: '4px',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  flexShrink: 0,
-                }}
-              >
-                {statusData.activeCount}/{statusData.allLength}
-              </Box>
-            )}
           </Box>
 
           {/* Vertical mode drawer */}
