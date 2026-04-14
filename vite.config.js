@@ -17,7 +17,13 @@ export default ({ mode }) => {
     },
     plugins: [
       react(),
-      VitePWA({ registerType: 'autoUpdate' }),
+      VitePWA({
+        registerType: 'prompt',
+        workbox: {
+          clientsClaim: true,
+          skipWaiting: false,
+        },
+      }),
       // a simple useful vite ftp plugin, based on ftp-deploy, upload your dist file after vite build.
       vitePluginFtp({
         // eslint-disable-next-line no-undef

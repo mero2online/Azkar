@@ -11,6 +11,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ViewDayIcon from '@mui/icons-material/ViewDay';
 import ViewCarouselIcon from '@mui/icons-material/ViewCarousel';
 import { Box } from '@mui/material';
+import UpdatePrompt from './UpdatePrompt';
 
 function App() {
   const { mode, toggleTheme, viewMode, toggleViewMode } = useTheme();
@@ -86,6 +87,7 @@ function App() {
         <Route path='/' element={<Home />}></Route>
         <Route path='/:ZekrId' element={<PreZekrGUI />}></Route>
       </Routes>
+      <UpdatePrompt />
     </>
   );
 }
