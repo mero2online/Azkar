@@ -65,7 +65,15 @@ function UpdatePrompt() {
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={() => updateServiceWorker(true)}
+          onClick={async () => {
+            try {
+              await updateServiceWorker(true);
+            } catch (e) { /* ignore */ }
+            // Fallback: force reload after a short delay in case SW message doesn't trigger controllerchange
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
+          }}
           variant='contained'
           color='primary'
           autoFocus

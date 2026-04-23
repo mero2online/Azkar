@@ -335,24 +335,6 @@ const ZekrGUI = ({ current, storedCounts }) => {
               flexShrink: 0,
             }}
           >
-            <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant='subtitle1'
-              sx={{
-                fontWeight: 'bold',
-                flex: 1,
-                textAlign: 'center',
-                fontSize: 'clamp(0.9rem, 3vw, 1.3rem)',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                mx: 1,
-              }}
-            >
-              {current.name}
-            </Typography>
             {statusData && (
               <Box
                 sx={{
@@ -369,6 +351,24 @@ const ZekrGUI = ({ current, storedCounts }) => {
                 {statusData.activeCount}/{statusData.allLength}
               </Box>
             )}
+            <Typography
+              variant='subtitle1'
+              sx={{
+                fontWeight: 'bold',
+                flex: 1,
+                textAlign: 'center',
+                fontSize: 'clamp(0.9rem, 3vw, 1.3rem)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                mx: 1,
+              }}
+            >
+              {current.name}
+            </Typography>
+            <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
+              <MenuIcon />
+            </IconButton>
           </Box>
 
           {/* Card indicator */}
@@ -549,7 +549,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
             open={drawerOpen}
             onClose={() => setDrawerOpen(false)}
           >
-            <Box sx={{ width: 280, p: 2, direction: 'rtl' }}>
+            <Box sx={{ width: 280, p: 2 }}>
               {/* Home, Theme & View Mode — top of drawer */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
                 <Button
@@ -592,7 +592,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
 
               <hr style={{ borderColor: theme.palette.divider, margin: '8px 0' }} />
 
-              <Typography variant='h6' sx={{ mb: 1, fontWeight: 'bold' }}>
+              <Typography variant='h6' sx={{ mb: 1, fontWeight: 'bold', textAlign: 'center' }}>
                 {current.name}
               </Typography>
 
@@ -709,9 +709,6 @@ const ZekrGUI = ({ current, storedCounts }) => {
                 gap: 1,
               }}
             >
-              <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
-                <MenuIcon />
-              </IconButton>
               {statusData && (
                 <Box
                   sx={{
@@ -727,6 +724,9 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   {statusData.statusTxt}: {statusData.activeCount}/{statusData.allLength}
                 </Box>
               )}
+              <IconButton onClick={() => setDrawerOpen(true)} color='inherit'>
+                <MenuIcon />
+              </IconButton>
             </Box>
             <h1 style={{
               fontSize: 'clamp(1.2rem, 5vw, 2.5rem)',
@@ -742,7 +742,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
             open={drawerOpen}
             onClose={() => setDrawerOpen(false)}
           >
-            <Box sx={{ width: 280, p: 2, direction: 'rtl' }}>
+            <Box sx={{ width: 280, p: 2 }}>
               {/* Home, Theme & View Mode — top of drawer */}
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
                 <Button

@@ -21,7 +21,7 @@ export default ({ mode }) => {
         registerType: 'prompt',
         workbox: {
           clientsClaim: true,
-          skipWaiting: false,
+          skipWaiting: true,
         },
       }),
       // a simple useful vite ftp plugin, based on ftp-deploy, upload your dist file after vite build.
