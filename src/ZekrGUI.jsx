@@ -26,6 +26,8 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ViewDayIcon from '@mui/icons-material/ViewDay';
 import HomeIcon from '@mui/icons-material/Home';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import { recordTap, recordCompletion, recordReset } from './History';
 
 // Vibration feedback on zekr completion
 const playCompletionFeedback = () => {
@@ -143,6 +145,7 @@ const ZekrGUI = ({ current, storedCounts }) => {
       };
     });
 
+    recordReset(current.id);
     setMergedCount(myMergedCount);
     setOpenResetDialog(false);
   };
@@ -480,7 +483,10 @@ const ZekrGUI = ({ current, storedCounts }) => {
                         return;
                       }
                       const willComplete = currentCount.count + 1 === currentCount.counterNum;
+                      const total = zekrById(current.id).length;
+                      recordTap(current.id, total);
                       if (willComplete) {
+                        recordCompletion(current.id, i, total);
                         playCompletionFeedback();
                         setTimeout(() => goToNextCard(), 300);
                       }
@@ -564,6 +570,19 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   sx={{ fontSize: '1rem' }}
                 >
                   Home
+                </Button>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
+                  startIcon={<BarChartIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate('/stats');
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Statistics
                 </Button>
                 <Button
                   variant='contained'
@@ -757,6 +776,19 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   sx={{ fontSize: '1rem' }}
                 >
                   Home
+                </Button>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
+                  startIcon={<BarChartIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate('/stats');
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Statistics
                 </Button>
                 <Button
                   variant='contained'
@@ -977,7 +1009,10 @@ const ZekrGUI = ({ current, storedCounts }) => {
                         setCurrentIndex(i);
 
                         const willComplete = currentCount.count + 1 === currentCount.counterNum;
+                        const total = zekrById(current.id).length;
+                        recordTap(current.id, total);
                         if (willComplete) {
+                          recordCompletion(current.id, i, total);
                           playCompletionFeedback();
                           setTimeout(() => handleNext(i), 300);
                         }

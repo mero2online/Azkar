@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import PreZekrGUI from './PreZekrGUI';
 import Home from './Home';
+import Stats from './Stats';
 import appData from '../package.json';
 import { useTheme, VIEW_MODES } from './ThemeContext';
 import IconButton from '@mui/material/IconButton';
@@ -85,6 +86,7 @@ function App() {
       </Box>
       <Routes>
         <Route path='/' element={<Home />}></Route>
+        <Route path='/stats' element={<Stats />}></Route>
         <Route path='/:ZekrId' element={<PreZekrGUI />}></Route>
       </Routes>
       <UpdatePrompt />

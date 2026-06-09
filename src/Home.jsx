@@ -3,11 +3,23 @@ import './App.css';
 import { Azkar } from './Constants';
 import { Box } from '@mui/material';
 import Button from '@mui/material/Button';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 function Home() {
   return (
     <>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: '400px', margin: '0 auto' }}>
+        <Link to='/stats' style={{ textDecoration: 'none' }}>
+          <Button
+            variant='outlined'
+            color='secondary'
+            fullWidth
+            startIcon={<BarChartIcon />}
+            sx={{ fontSize: '1.1em', py: 1.2 }}
+          >
+            Statistics
+          </Button>
+        </Link>
         {Azkar.map((z, i) => {
           return (
             <Link key={z.id} to={`/${i}`} style={{ textDecoration: 'none' }}>
