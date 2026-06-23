@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
-import { Box, Typography, TextField, CircularProgress } from '@mui/material';
+import { Box, Typography, TextField, CircularProgress, MenuItem } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -22,6 +22,9 @@ import {
   loadIqamaSettings,
   saveIqamaSettings,
   DEFAULT_IQAMA,
+  loadCalculationMethod,
+  saveCalculationMethod,
+  CALCULATION_METHODS,
 } from './PrayerTimesData';
 
 const PRAYER_ORDER = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -105,6 +108,8 @@ function PrayerTimes() {
   const [iqama, setIqama] = useState(() => loadIqamaSettings());
   const [iqamaDialogOpen, setIqamaDialogOpen] = useState(false);
   const [iqamaDraft, setIqamaDraft] = useState(iqama);
+  const [calcMethod, setCalcMethod] = useState(() => loadCalculationMethod());
+  const [methodDraft, setMethodDraft] = useState(calcMethod);
   const [monthData, setMonthData] = useState(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [monthError, setMonthError] = useState('');
@@ -547,9 +552,13 @@ function PrayerTimes() {
             variant='outlined'
             color='primary'
             startIcon={<SettingsIcon />}
-            onClick={() => { setIqamaDraft(iqama); setIqamaDialogOpen(true); }}
+            onClick={() => {
+              setIqamaDraft(iqama);
+              setMethodDraft(calcMethod);
+              setIqamaDialogOpen(true);
+            }}
           >
-            Iqama settings
+            Settings
           </Button>
           <Button variant='outlined' color='secondary' onClick={changeLocation}>
             Change location
@@ -563,10 +572,34 @@ function PrayerTimes() {
         aria-labelledby='iqama-dialog-title'
         disableRestoreFocus
       >
-        <DialogTitle id='iqama-dialog-title'>Iqama settings</DialogTitle>
+        <DialogTitle id='iqama-dialog-title'>Settings</DialogTitle>
         <DialogContent>
-          <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>
-            Minutes after each adhan for iqama at your mosque.
+          <Typography variant='body2' sx={{ fontWeight: 'bold', mb: 1 }}>
+            Calculation method
+          </Typography>
+          <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+            Choose the method that matches your country / region.
+          </Typography>
+          <TextField
+            select
+            size='small'
+            value={methodDraft}
+            onChange={(e) => setMethodDraft(parseInt(e.target.value, 10))}
+            fullWidth
+            SelectProps={{
+              MenuProps: { PaperProps: { sx: { maxHeight: 320 } } },
+            }}
+            sx={{ mb: 3 }}
+          >
+            {CALCULATION_METHODS.map((m) => (
+              <MenuItem key={m.id} value={m.id}>
+                {m.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Typography variant='body2' sx={{ fontWeight: 'bold', mb: 1 }}>
+            Iqama offsets (minutes after adhan)
           </Typography>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
             {Object.keys(DEFAULT_IQAMA).map((p) => (
@@ -605,6 +638,15 @@ function PrayerTimes() {
               }
               setIqama(cleaned);
               saveIqamaSettings(cleaned);
+
+              const methodChanged = methodDraft !== calcMethod;
+              if (methodChanged) {
+                setCalcMethod(methodDraft);
+                saveCalculationMethod(methodDraft);
+                // Re-fetch today's data with the new method; clear month chart cache so it re-fetches when opened
+                setMonthData(null);
+                if (location) doFetch(location);
+              }
               setIqamaDialogOpen(false);
             }}
             variant='contained'
