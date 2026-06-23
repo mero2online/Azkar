@@ -3,10 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import { Box, Typography, TextField, CircularProgress } from '@mui/material';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import HomeIcon from '@mui/icons-material/Home';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
 import {
   loadCachedLocation,
@@ -14,6 +19,9 @@ import {
   clearLocation,
   fetchWithCacheFallback,
   fetchMonthWithCacheFallback,
+  loadIqamaSettings,
+  saveIqamaSettings,
+  DEFAULT_IQAMA,
 } from './PrayerTimesData';
 
 const PRAYER_ORDER = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -45,6 +53,18 @@ const formatRemaining = (ms) => {
   if (m > 0) return `in ${m}m`;
   const s = Math.floor((ms % 60000) / 1000);
   return `in ${s}s`;
+};
+
+// Add N minutes to "HH:mm" (24h) and return new "HH:mm" wrapped within the same day
+const addMinutesHHmm = (hhmm, minutes) => {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map((n) => parseInt(n, 10));
+  if (Number.isNaN(h) || Number.isNaN(m)) return hhmm;
+  let total = h * 60 + m + minutes;
+  total = ((total % 1440) + 1440) % 1440;
+  const nh = Math.floor(total / 60);
+  const nm = total % 60;
+  return `${String(nh).padStart(2, '0')}:${String(nm).padStart(2, '0')}`;
 };
 
 const formatTime12 = (hhmm) => {
@@ -82,6 +102,9 @@ function PrayerTimes() {
   const [cityInput, setCityInput] = useState('');
   const [countryInput, setCountryInput] = useState('');
   const [showChart, setShowChart] = useState(false);
+  const [iqama, setIqama] = useState(() => loadIqamaSettings());
+  const [iqamaDialogOpen, setIqamaDialogOpen] = useState(false);
+  const [iqamaDraft, setIqamaDraft] = useState(iqama);
   const [monthData, setMonthData] = useState(null);
   const [monthLoading, setMonthLoading] = useState(false);
   const [monthError, setMonthError] = useState('');
@@ -419,6 +442,11 @@ function PrayerTimes() {
             const isNext = nextPrayer && !nextPrayer.tomorrow && nextPrayer.name === name;
             const prayerDate = parseTimeToday(time, now);
             const isPassed = prayerDate && prayerDate < now;
+            // Active highlight window = iqama * 2 minutes after adhan (per prayer).
+            // Prayers without an iqama setting (e.g., Sunrise) have no active window.
+            const iqamaMin = iqama[name];
+            const activeWindowMs = Number.isFinite(iqamaMin) ? iqamaMin * 2 * 60 * 1000 : 0;
+            const isCurrent = isPassed && activeWindowMs > 0 && (now - prayerDate) < activeWindowMs;
             const DAY_MS = 24 * 60 * 60 * 1000;
             // Time since most recent occurrence (today if passed, else yesterday)
             const agoMs = prayerDate
@@ -440,14 +468,22 @@ function PrayerTimes() {
                   py: 1,
                   px: 1,
                   borderBottom: `1px solid ${theme.palette.divider}`,
-                  backgroundColor: isNext ? `${theme.palette.success.main}22` : 'transparent',
-                  borderLeft: isNext ? `4px solid ${theme.palette.success.main}` : '4px solid transparent',
+                  backgroundColor: isCurrent
+                    ? `${theme.palette.warning.main}33`
+                    : isNext
+                    ? `${theme.palette.success.main}22`
+                    : 'transparent',
+                  borderLeft: isCurrent
+                    ? `4px solid ${theme.palette.warning.main}`
+                    : isNext
+                    ? `4px solid ${theme.palette.success.main}`
+                    : '4px solid transparent',
                   borderRadius: '4px',
-                  opacity: isPassed ? 0.7 : 1,
+                  opacity: isPassed && !isCurrent ? 0.7 : 1,
                 }}
               >
                 <Box>
-                  <Typography variant='body1' sx={{ fontWeight: isNext ? 'bold' : 'normal' }}>
+                  <Typography variant='body1' sx={{ fontWeight: isNext || isCurrent ? 'bold' : 'normal' }}>
                     {name}
                     {PRAYER_NAME_AR[name] && (
                       <Typography component='span' variant='body2' sx={{ color: 'text.secondary', ml: 1 }}>
@@ -462,9 +498,14 @@ function PrayerTimes() {
                   )}
                 </Box>
                 <Box sx={{ textAlign: 'center', minWidth: '110px' }}>
-                  <Typography variant='body1' sx={{ fontWeight: isNext ? 'bold' : 'normal' }}>
+                  <Typography variant='body1' sx={{ fontWeight: isNext || isCurrent ? 'bold' : 'normal' }}>
                     {formatTime12(time)}
                   </Typography>
+                  {iqama[name] != null && prayerDate && (
+                    <Typography variant='caption' sx={{ color: theme.palette.info.main, display: 'block', fontWeight: 'bold' }}>
+                      Iqama: {formatTime12(addMinutesHHmm(time, iqama[name]))}
+                    </Typography>
+                  )}
                   {agoLabel && (
                     <Typography variant='caption' sx={{ color: 'text.secondary', display: 'block' }}>
                       {agoLabel}
@@ -502,11 +543,77 @@ function PrayerTimes() {
           >
             {showChart ? 'Hide chart' : 'Monthly chart'}
           </Button>
+          <Button
+            variant='outlined'
+            color='primary'
+            startIcon={<SettingsIcon />}
+            onClick={() => { setIqamaDraft(iqama); setIqamaDialogOpen(true); }}
+          >
+            Iqama settings
+          </Button>
           <Button variant='outlined' color='secondary' onClick={changeLocation}>
             Change location
           </Button>
         </Box>
       )}
+
+      <Dialog
+        open={iqamaDialogOpen}
+        onClose={() => setIqamaDialogOpen(false)}
+        aria-labelledby='iqama-dialog-title'
+        disableRestoreFocus
+      >
+        <DialogTitle id='iqama-dialog-title'>Iqama settings</DialogTitle>
+        <DialogContent>
+          <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>
+            Minutes after each adhan for iqama at your mosque.
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, mt: 1 }}>
+            {Object.keys(DEFAULT_IQAMA).map((p) => (
+              <TextField
+                key={p}
+                label={p}
+                type='number'
+                size='small'
+                inputProps={{ min: 0, max: 120 }}
+                value={iqamaDraft[p] ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value === '' ? '' : parseInt(e.target.value, 10);
+                  setIqamaDraft({ ...iqamaDraft, [p]: Number.isNaN(v) ? '' : v });
+                }}
+                fullWidth
+              />
+            ))}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => { setIqamaDraft({ ...DEFAULT_IQAMA }); }}
+            color='inherit'
+          >
+            Defaults
+          </Button>
+          <Button onClick={() => setIqamaDialogOpen(false)} variant='contained' color='primary' autoFocus>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              const cleaned = {};
+              for (const k of Object.keys(DEFAULT_IQAMA)) {
+                const v = iqamaDraft[k];
+                cleaned[k] = Number.isFinite(v) && v >= 0 ? v : DEFAULT_IQAMA[k];
+              }
+              setIqama(cleaned);
+              saveIqamaSettings(cleaned);
+              setIqamaDialogOpen(false);
+            }}
+            variant='contained'
+            color='success'
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {showChart && (
         <Box sx={cardSx}>
