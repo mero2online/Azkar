@@ -27,6 +27,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import ViewDayIcon from '@mui/icons-material/ViewDay';
 import HomeIcon from '@mui/icons-material/Home';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import MosqueIcon from '@mui/icons-material/Mosque';
 import { recordTap, recordCompletion, recordReset } from './History';
 
 // Vibration feedback on zekr completion
@@ -575,6 +576,19 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   variant='contained'
                   color='secondary'
                   fullWidth
+                  startIcon={<MosqueIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate('/prayer-times');
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Prayer Times
+                </Button>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
                   startIcon={<BarChartIcon />}
                   onClick={() => {
                     setDrawerOpen(false);
@@ -776,6 +790,19 @@ const ZekrGUI = ({ current, storedCounts }) => {
                   sx={{ fontSize: '1rem' }}
                 >
                   Home
+                </Button>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  fullWidth
+                  startIcon={<MosqueIcon />}
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate('/prayer-times');
+                  }}
+                  sx={{ fontSize: '1rem' }}
+                >
+                  Prayer Times
                 </Button>
                 <Button
                   variant='contained'
