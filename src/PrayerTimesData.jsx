@@ -3,7 +3,33 @@ import { format } from 'date-fns';
 const LOCATION_KEY = 'prayerTimesLocation';
 const CACHE_KEY = 'prayerTimesCache';
 const MONTH_CACHE_KEY = 'prayerTimesMonthCache';
+const IQAMA_KEY = 'prayerIqamaSettings';
 const METHOD = 4; // Umm Al-Qura, Mecca
+
+// Default iqama offsets in minutes after adhan (Sunrise has no iqama)
+export const DEFAULT_IQAMA = {
+  Fajr: 25,
+  Dhuhr: 15,
+  Asr: 15,
+  Maghrib: 10,
+  Isha: 15,
+};
+
+export const loadIqamaSettings = () => {
+  try {
+    const raw = localStorage.getItem(IQAMA_KEY);
+    const saved = raw ? JSON.parse(raw) : {};
+    return { ...DEFAULT_IQAMA, ...saved };
+  } catch {
+    return { ...DEFAULT_IQAMA };
+  }
+};
+
+export const saveIqamaSettings = (settings) => {
+  try {
+    localStorage.setItem(IQAMA_KEY, JSON.stringify(settings));
+  } catch { /* ignore */ }
+};
 
 export const loadCachedLocation = () => {
   try {

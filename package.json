@@ -2,7 +2,7 @@
   "name": "azkar",
   "displayName": "Zekr App",
   "private": true,
-  "version": "0.1.60",
+  "version": "0.1.63",
   "type": "module",
   "scripts": {
     "dev": "vite",
